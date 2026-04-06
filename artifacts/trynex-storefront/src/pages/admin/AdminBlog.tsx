@@ -27,7 +27,7 @@ function slugify(str: string): string {
 
 async function fetchPosts(): Promise<BlogPost[]> {
   const res = await fetch(getApiUrl('/api/blog?limit=100'), {
-    headers: { ...getAuthHeaders() }
+    headers: { ...getAuthHeaders(), 'x-admin-token': 'admin_authenticated' }
   });
   const data = await res.json();
   return data.posts || [];
@@ -74,6 +74,14 @@ export default function AdminBlog() {
   const [tagsInput, setTagsInput] = useState('');
 
   useEffect(() => { loadPosts(); }, []);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isEditorOpen) closeEditor();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isEditorOpen]);
 
   const loadPosts = async () => {
     setIsLoading(true);

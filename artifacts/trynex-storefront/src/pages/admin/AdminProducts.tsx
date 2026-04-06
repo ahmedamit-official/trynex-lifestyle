@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import {
   useListProducts, useCreateProduct, useDeleteProduct, useUpdateProduct, useListCategories,
-  getListProductsQueryKey
+  getListProductsQueryKey,
+  type Category, type CreateProductRequest, type UpdateProductRequest
 } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice } from "@/lib/utils";
-import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star, Tag } from "lucide-react";
+import { Plus, Trash2, X, Package, Edit3, AlertTriangle, Search, Star } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,7 +48,7 @@ export default function AdminProducts() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<EditingProduct | null>(null);
 
-  const { data, isLoading } = useListProducts({ limit: 200 } as any);
+  const { data, isLoading } = useListProducts({ limit: 200 });
   const { data: categoriesData } = useListCategories();
   const reqOpts = { request: { headers: getAuthHeaders() } };
   const { mutateAsync: createProduct, isPending: isCreating } = useCreateProduct(reqOpts);
@@ -59,7 +60,7 @@ export default function AdminProducts() {
     defaultValues: { featured: false, customizable: true, stock: 0 }
   });
 
-  const categories = (categoriesData as any) ?? [];
+  const categories: Category[] = categoriesData ?? [];
 
   const openAddModal = () => {
     setEditingProduct(null);
@@ -103,10 +104,38 @@ export default function AdminProducts() {
       };
 
       if (editingProduct) {
-        await updateProduct({ id: editingProduct.id, data: payload as any });
+        const updatePayload: UpdateProductRequest = {
+          name: payload.name,
+          slug: payload.slug,
+          description: payload.description,
+          price: payload.price,
+          discountPrice: payload.discountPrice,
+          stock: payload.stock,
+          categoryId: payload.categoryId,
+          imageUrl: payload.imageUrl,
+          sizes: payload.sizes,
+          colors: payload.colors,
+          featured: payload.featured,
+          customizable: payload.customizable,
+        };
+        await updateProduct({ id: editingProduct.id, data: updatePayload });
         toast({ title: "✓ Product updated successfully!" });
       } else {
-        await createProduct({ data: payload as any });
+        const createPayload: CreateProductRequest = {
+          name: payload.name,
+          slug: payload.slug,
+          description: payload.description,
+          price: payload.price,
+          discountPrice: payload.discountPrice,
+          stock: payload.stock,
+          categoryId: payload.categoryId,
+          imageUrl: payload.imageUrl,
+          sizes: payload.sizes,
+          colors: payload.colors,
+          featured: payload.featured,
+          customizable: payload.customizable,
+        };
+        await createProduct({ data: createPayload });
         toast({ title: "✓ Product added successfully!" });
       }
       queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
@@ -137,6 +166,17 @@ export default function AdminProducts() {
 
   const lowStockCount = (data?.products ?? []).filter(p => p.stock <= 5).length;
   const isSaving = isCreating || isUpdating;
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        setModalOpen(false);
+        setEditingProduct(null);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isModalOpen]);
 
   return (
     <AdminLayout>
@@ -290,6 +330,7 @@ export default function AdminProducts() {
                 </div>
                 <button
                   onClick={() => { setModalOpen(false); setEditingProduct(null); }}
+                  aria-label="Close modal"
                   className="p-2 text-gray-400 hover:text-gray-700 rounded-xl transition-colors hover:bg-gray-100"
                 >
                   <X className="w-5 h-5" />
