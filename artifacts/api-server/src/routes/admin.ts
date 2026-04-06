@@ -7,9 +7,35 @@ const router: IRouter = Router();
 
 const ADMIN_PASSWORD = "Admins@Trynex";
 const SALT = "trynex_salt_2024";
+const TOKEN_SECRET = "trynex_token_secret_2024";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password + SALT).digest("hex");
+}
+
+function generateToken(): string {
+  const timestamp = Date.now();
+  const random = crypto.randomBytes(16).toString("hex");
+  const payload = `admin:${timestamp}:${random}`;
+  const signature = crypto.createHash("sha256").update(payload + TOKEN_SECRET).digest("hex");
+  return Buffer.from(JSON.stringify({ payload, signature })).toString("base64url");
+}
+
+function validateToken(token: string): boolean {
+  try {
+    const decoded = JSON.parse(Buffer.from(token, "base64url").toString("utf8"));
+    if (!decoded.payload || !decoded.signature) return false;
+    const expectedSignature = crypto.createHash("sha256").update(decoded.payload + TOKEN_SECRET).digest("hex");
+    if (expectedSignature !== decoded.signature) return false;
+    const parts = decoded.payload.split(":");
+    if (parts[0] !== "admin") return false;
+    const timestamp = parseInt(parts[1], 10);
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() - timestamp > sevenDaysMs) return false;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function ensureAdminExists() {
@@ -36,7 +62,7 @@ router.post("/admin/login", async (req, res) => {
       res.status(401).json({ error: "unauthorized", message: "Invalid password" });
       return;
     }
-    const token = crypto.createHash("sha256").update(`admin:${Date.now()}:trynex_secret`).digest("hex");
+    const token = generateToken();
     res.cookie("admin_token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -56,7 +82,7 @@ router.post("/admin/logout", (_req, res) => {
 
 router.get("/admin/me", async (req, res) => {
   const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
-  if (!token) {
+  if (!token || !validateToken(token)) {
     res.status(401).json({ error: "unauthorized", message: "Not authenticated" });
     return;
   }

@@ -8,18 +8,18 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { Save, Store, Phone, Globe, CreditCard, Truck, MessageCircle, Type } from "lucide-react";
 
-const inputClass = "w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-foreground/20";
-const inputStyle = { background: 'hsl(0 0% 9.5%)', border: '1px solid #e5e7eb', color: '#111827' };
+const inputClass = "w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
+const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
-const SectionCard = ({ icon: Icon, title, iconColor = "hsl(var(--primary))", children }: {
+const SectionCard = ({ icon: Icon, title, iconColor = "#E85D04", children }: {
   icon: any; title: string; iconColor?: string; children: React.ReactNode;
 }) => (
-  <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-white/5" style={{ background: 'hsl(0 0% 7.5%)' }}>
+  <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}>
+    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
       <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}25` }}>
         <Icon className="w-4 h-4" style={{ color: iconColor }} />
       </div>
-      <h2 className="font-bold text-sm">{title}</h2>
+      <h2 className="font-bold text-sm text-gray-800">{title}</h2>
     </div>
     <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">{children}</div>
@@ -29,7 +29,7 @@ const SectionCard = ({ icon: Icon, title, iconColor = "hsl(var(--primary))", chi
 
 const Field = ({ label, children, full = false }: { label: string; children: React.ReactNode; full?: boolean }) => (
   <div className={full ? "md:col-span-2" : ""}>
-    <label className="block text-[11px] font-black uppercase tracking-widest text-foreground/30 mb-2">{label}</label>
+    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">{label}</label>
     {children}
   </div>
 );
@@ -60,9 +60,9 @@ export default function AdminSettings() {
   return (
     <AdminLayout>
       <div className="mb-10">
-        <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Configuration</p>
-        <h1 className="text-4xl font-black font-display tracking-tighter">Store Settings</h1>
-        <p className="text-sm text-foreground/35 mt-2">Configure your store details, payment numbers and more.</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2">Configuration</p>
+        <h1 className="text-4xl font-black font-display tracking-tighter text-gray-900">Store Settings</h1>
+        <p className="text-sm text-gray-400 mt-2">Configure your store details, payment numbers and more.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-3xl">
@@ -158,7 +158,7 @@ export default function AdminSettings() {
             <Save className="w-4 h-4" />
             {isPending ? "Saving Changes..." : "Save All Settings"}
           </button>
-          <p className="text-xs text-foreground/30">Changes take effect immediately.</p>
+          <p className="text-xs text-gray-400">Changes take effect immediately.</p>
         </div>
       </form>
     </AdminLayout>
