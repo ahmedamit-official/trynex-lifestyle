@@ -7,35 +7,32 @@ const router: IRouter = Router();
 
 const ADMIN_PASSWORD = "Admins@Trynex";
 const SALT = "trynex_salt_2024";
-const TOKEN_SECRET = "trynex_token_secret_2024";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password + SALT).digest("hex");
 }
 
-function generateToken(): string {
-  const timestamp = Date.now();
-  const random = crypto.randomBytes(16).toString("hex");
-  const payload = `admin:${timestamp}:${random}`;
-  const signature = crypto.createHash("sha256").update(payload + TOKEN_SECRET).digest("hex");
-  return Buffer.from(JSON.stringify({ payload, signature })).toString("base64url");
+const SHA256_HEX_RE = /^[0-9a-f]{64}$/;
+
+const validTokens = new Map<string, number>();
+
+function issueToken(): string {
+  const token = crypto.createHash("sha256")
+    .update(`admin:${Date.now()}:${crypto.randomBytes(16).toString("hex")}:trynex_secret`)
+    .digest("hex");
+  validTokens.set(token, Date.now() + 7 * 24 * 60 * 60 * 1000);
+  return token;
 }
 
 function validateToken(token: string): boolean {
-  try {
-    const decoded = JSON.parse(Buffer.from(token, "base64url").toString("utf8"));
-    if (!decoded.payload || !decoded.signature) return false;
-    const expectedSignature = crypto.createHash("sha256").update(decoded.payload + TOKEN_SECRET).digest("hex");
-    if (expectedSignature !== decoded.signature) return false;
-    const parts = decoded.payload.split(":");
-    if (parts[0] !== "admin") return false;
-    const timestamp = parseInt(parts[1], 10);
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    if (Date.now() - timestamp > sevenDaysMs) return false;
-    return true;
-  } catch {
+  if (!SHA256_HEX_RE.test(token)) return false;
+  const expiry = validTokens.get(token);
+  if (expiry === undefined) return false;
+  if (Date.now() > expiry) {
+    validTokens.delete(token);
     return false;
   }
+  return true;
 }
 
 async function ensureAdminExists() {
@@ -62,7 +59,7 @@ router.post("/admin/login", async (req, res) => {
       res.status(401).json({ error: "unauthorized", message: "Invalid password" });
       return;
     }
-    const token = generateToken();
+    const token = issueToken();
     res.cookie("admin_token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -75,7 +72,9 @@ router.post("/admin/login", async (req, res) => {
   }
 });
 
-router.post("/admin/logout", (_req, res) => {
+router.post("/admin/logout", (req, res) => {
+  const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
+  if (token) validTokens.delete(token);
   res.clearCookie("admin_token");
   res.json({ success: true, message: "Logged out" });
 });

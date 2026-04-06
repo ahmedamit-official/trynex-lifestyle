@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import {
   useListProducts, useCreateProduct, useDeleteProduct, useUpdateProduct, useListCategories,
   getListProductsQueryKey,
-  type Category, type CreateProductRequest, type UpdateProductRequest
+  type Category, type Product, type CreateProductRequest, type UpdateProductRequest
 } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice } from "@/lib/utils";
@@ -68,7 +68,7 @@ export default function AdminProducts() {
     setModalOpen(true);
   };
 
-  const openEditModal = (product: any) => {
+  const openEditModal = (product: Product) => {
     setEditingProduct({ id: product.id, ...product });
     reset({
       name: product.name,
@@ -353,7 +353,7 @@ export default function AdminProducts() {
                     <Label>Category</Label>
                     <select {...register("categoryId")} className={inputClass} style={inputStyle}>
                       <option value="">Select category...</option>
-                      {categories.map((cat: any) => (
+                      {categories.map((cat: Category) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
