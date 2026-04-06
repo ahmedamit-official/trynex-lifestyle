@@ -3,6 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -13,6 +16,7 @@ import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/not-found";
 
 // Admin Pages
@@ -35,7 +39,6 @@ const queryClient = new QueryClient({
 function Router() {
   return (
     <Switch>
-      {/* Public Routes */}
       <Route path="/" component={Home} />
       <Route path="/products" component={Products} />
       <Route path="/product/:id" component={ProductDetail} />
@@ -44,8 +47,8 @@ function Router() {
       <Route path="/track" component={TrackOrder} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/wishlist" component={Wishlist} />
 
-      {/* Admin Routes */}
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
@@ -53,7 +56,6 @@ function Router() {
       <Route path="/admin/blog" component={AdminBlog} />
       <Route path="/admin/settings" component={AdminSettings} />
 
-      {/* 404 */}
       <Route component={NotFound} />
     </Switch>
   );
@@ -64,10 +66,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <CartProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          <Toaster />
+          <WishlistProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AnnouncementBar />
+              <Router />
+              <WhatsAppButton />
+            </WouterRouter>
+            <Toaster />
+          </WishlistProvider>
         </CartProvider>
       </TooltipProvider>
     </QueryClientProvider>

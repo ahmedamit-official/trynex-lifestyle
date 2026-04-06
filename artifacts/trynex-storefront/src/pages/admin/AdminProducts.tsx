@@ -27,11 +27,10 @@ const productSchema = z.object({
 
 type ProductForm = z.infer<typeof productSchema>;
 
-const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-foreground/20";
-const inputStyle = { background: 'hsl(0 0% 9.5%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' };
+const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400 border border-gray-200 bg-white text-gray-900";
 
 const Label = ({ children }: { children: React.ReactNode }) => (
-  <label className="block text-[11px] font-black uppercase tracking-widest text-foreground/30 mb-1.5">{children}</label>
+  <label className="block text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1.5">{children}</label>
 );
 
 export default function AdminProducts() {
@@ -109,7 +108,7 @@ export default function AdminProducts() {
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Inventory</p>
           <h1 className="text-4xl font-black font-display tracking-tighter">Products</h1>
           <div className="flex items-center gap-3 mt-2">
-            <span className="text-xs text-foreground/35 font-medium">{data?.total ?? 0} total products</span>
+            <span className="text-xs text-gray-500 font-medium">{data?.total ?? 0} total products</span>
             {lowStockCount > 0 && (
               <span className="flex items-center gap-1 text-xs font-bold" style={{ color: '#f59e0b' }}>
                 <AlertTriangle className="w-3 h-3" />
@@ -130,13 +129,13 @@ export default function AdminProducts() {
       {/* Search */}
       <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search products..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all"
-            style={{ background: 'hsl(0 0% 8%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' }}
+            style={{ background: '#f9fafb', border: '1px solid #e5e7eb', color: '#111827' }}
           />
         </div>
       </div>
@@ -150,10 +149,10 @@ export default function AdminProducts() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               className="rounded-2xl overflow-hidden group card-shine"
-              style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
             >
               {/* Image */}
-              <div className="aspect-square relative overflow-hidden" style={{ background: 'hsl(0 0% 10%)' }}>
+              <div className="aspect-square relative overflow-hidden" style={{ background: '#f9fafb' }}>
                 <img
                   src={product.imageUrl || `https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&fit=crop`}
                   alt={product.name}
@@ -187,12 +186,12 @@ export default function AdminProducts() {
               {/* Info */}
               <div className="p-4">
                 <h3 className="font-bold text-sm leading-tight truncate mb-1">{product.name}</h3>
-                <p className="text-xs text-foreground/30 truncate mb-3">{product.slug}</p>
+                <p className="text-xs text-gray-400 truncate mb-3">{product.slug}</p>
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="font-black text-primary text-sm">{formatPrice(product.price)}</span>
                     {product.discountPrice && (
-                      <span className="ml-2 text-xs line-through text-foreground/25">{formatPrice(product.discountPrice)}</span>
+                      <span className="ml-2 text-xs line-through text-gray-400">{formatPrice(product.discountPrice)}</span>
                     )}
                   </div>
                   <div className={`text-[11px] font-bold px-2.5 py-1 rounded-lg ${product.stock <= 5 ? '' : ''}`}
@@ -211,7 +210,7 @@ export default function AdminProducts() {
           {filteredProducts.length === 0 && (
             <div className="col-span-full py-20 text-center">
               <Package className="w-14 h-14 mx-auto mb-4 opacity-15" />
-              <p className="text-foreground/30 font-medium text-lg">
+              <p className="text-gray-400 font-medium text-lg">
                 {search ? `No products matching "${search}"` : 'No products yet. Add your first product!'}
               </p>
             </div>
@@ -235,13 +234,13 @@ export default function AdminProducts() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               className="w-full max-w-lg rounded-3xl overflow-hidden max-h-[90vh] overflow-y-auto"
-              style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.1)' }}
+              style={{ background: 'white', border: '1px solid #e5e7eb' }}
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-7 py-5 border-b border-white/5 sticky top-0"
-                style={{ background: 'hsl(0 0% 7%)' }}>
+                style={{ background: 'white' }}>
                 <h2 className="text-xl font-black font-display">Add New Product</h2>
-                <button onClick={() => setModalOpen(false)} className="p-2 text-foreground/30 hover:text-foreground rounded-xl transition-colors"
+                <button onClick={() => setModalOpen(false)} className="p-2 text-gray-400 hover:text-gray-900 rounded-xl transition-colors"
                   style={{ background: 'rgba(255,255,255,0.05)' }}>
                   <X className="w-5 h-5" />
                 </button>

@@ -37,11 +37,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   if (isLoading || isError) return <Loader fullScreen />;
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'hsl(0 0% 5%)' }}>
+    <div className="min-h-screen flex bg-gray-50">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -49,24 +49,27 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 flex flex-col transition-transform duration-300 md:relative md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 flex flex-col transition-transform duration-300 md:relative md:translate-x-0 bg-white border-r border-gray-100 shadow-sm",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
-        style={{ background: 'hsl(0 0% 6%)', borderRight: '1px solid rgba(255,255,255,0.06)' }}
       >
         {/* Brand */}
-        <div className="flex items-center justify-between p-6 border-b border-white/5">
-          <Link href="/" className="font-black font-display text-xl tracking-tighter">
-            TRY<span className="text-gradient">NEX</span>
-            <span className="block text-[10px] font-semibold text-foreground/30 tracking-widest uppercase mt-0.5">Admin Panel</span>
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black font-display text-white text-sm"
+              style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>T</div>
+            <div className="leading-none">
+              <span className="font-black font-display text-lg text-gray-900">TRY<span style={{ color: '#E85D04' }}>NEX</span></span>
+              <span className="block text-[9px] font-bold text-gray-400 tracking-widest uppercase mt-0.5">Admin Panel</span>
+            </div>
           </Link>
-          <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1.5 text-foreground/30 hover:text-foreground">
+          <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1.5 text-gray-400 hover:text-gray-600">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {MENU.map(item => {
             const Icon = item.icon;
             const active = location === item.href;
@@ -78,10 +81,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200",
                   active
-                    ? "text-white"
-                    : "text-foreground/40 hover:text-foreground hover:bg-white/5"
+                    ? "text-white shadow-md"
+                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                 )}
-                style={active ? { background: 'hsl(var(--primary))', boxShadow: '0 4px 20px rgba(255,107,43,0.3)' } : {}}
+                style={active ? {
+                  background: 'linear-gradient(135deg, #E85D04, #FB8500)',
+                  boxShadow: '0 4px 16px rgba(232,93,4,0.3)'
+                } : {}}
               >
                 <Icon className="w-4 h-4" />
                 {item.name}
@@ -91,10 +97,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-white/5">
+        <div className="p-3 border-t border-gray-100">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all w-full"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all w-full"
           >
             <LogOut className="w-4 h-4" />
             Logout
@@ -102,22 +108,26 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-16 flex items-center gap-4 px-6 border-b border-white/5" style={{ background: 'hsl(0 0% 6%)' }}>
+        <header className="h-16 flex items-center gap-4 px-6 border-b border-gray-100 bg-white shadow-sm">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="md:hidden p-2 text-foreground/40 hover:text-foreground"
+            className="md:hidden p-2 text-gray-400 hover:text-gray-600"
           >
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex-1" />
+          <Link href="/" className="text-xs font-semibold text-gray-400 hover:text-orange-600 transition-colors mr-2">
+            ← View Store
+          </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white" style={{ background: 'hsl(var(--primary))' }}>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white"
+              style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
               A
             </div>
-            <span className="text-sm font-semibold text-foreground/60 hidden sm:block">Admin</span>
+            <span className="text-sm font-semibold text-gray-600 hidden sm:block">Admin</span>
           </div>
         </header>
 

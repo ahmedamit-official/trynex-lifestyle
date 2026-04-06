@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trynex.com.bd/sitemap.xml
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /admin/login

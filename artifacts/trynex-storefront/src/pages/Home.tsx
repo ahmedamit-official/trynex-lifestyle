@@ -4,54 +4,130 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Loader } from "@/components/ui/Loader";
 import { useListProducts } from "@workspace/api-client-react";
-import { ArrowRight, Sparkles, Zap, Package, Star, ChevronRight, Check, Truck, ShieldCheck, Clock, Palette, Layers, Award } from "lucide-react";
+import {
+  ArrowRight, Sparkles, Zap, Package, Star, Check, Truck,
+  ShieldCheck, Clock, Palette, Layers, Award, ChevronRight,
+  Users, BadgeCheck, Flame, Timer
+} from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-const MARQUEE_ITEMS = ["PREMIUM QUALITY", "CUSTOM DESIGNS", "FAST DELIVERY", "MADE IN BD", "YOU IMAGINE WE CRAFT", "LIMITED EDITION", "EXCLUSIVE DROPS", "100% AUTHENTIC", "PREMIUM FABRIC", "BEST PRICE"];
+const MARQUEE_ITEMS = [
+  "PREMIUM QUALITY", "CUSTOM DESIGNS", "FAST DELIVERY", "MADE IN BANGLADESH",
+  "YOU IMAGINE WE CRAFT", "LIMITED EDITION", "EXCLUSIVE DROPS", "100% AUTHENTIC",
+  "PREMIUM 320GSM FABRIC", "BEST PRICE IN BD"
+];
 
 const FEATURES = [
   {
     icon: Palette,
     title: "100% Custom Design",
-    desc: "Every piece is crafted to your exact vision — from your concept sketch to a wearable masterpiece, delivered to your door.",
-    color: "#FF6B2B",
+    desc: "Every piece crafted to your exact vision — from concept sketch to wearable masterpiece, delivered to your door.",
+    color: "#E85D04",
+    bg: "#fff4ee",
     badge: "Unlimited Creativity"
   },
   {
     icon: Zap,
     title: "48-Hour Express",
-    desc: "Lightning-fast production with nationwide delivery across all 64 districts of Bangladesh. Speed meets quality.",
-    color: "#60a5fa",
+    desc: "Lightning-fast production with nationwide delivery across all 64 districts. Speed meets premium quality.",
+    color: "#2563eb",
+    bg: "#eff6ff",
     badge: "Super Fast"
   },
   {
     icon: Layers,
     title: "Premium Materials",
-    desc: "We source only the finest 230-320GSM fabrics. Vibrant colors, sharp prints, lasting comfort — every single time.",
-    color: "#4ade80",
+    desc: "We source only the finest 230-320GSM fabrics. Vibrant colors, sharp prints, lasting comfort — every time.",
+    color: "#16a34a",
+    bg: "#f0fdf4",
     badge: "Top Grade"
   },
 ];
 
 const PROCESS = [
-  { step: "01", title: "Choose & Design", desc: "Pick your product and share your design idea — or let our team help you create something incredible." },
-  { step: "02", title: "We Craft It", desc: "Our artisans use premium fabrics and state-of-the-art printing to bring your vision to life with precision." },
-  { step: "03", title: "Fast Delivery", desc: "Your custom order is packed with care and delivered express anywhere in Bangladesh within 3-5 days." },
+  { step: "01", title: "Choose & Design", desc: "Pick your product and share your design — or let our team help create something incredible.", icon: "🎨" },
+  { step: "02", title: "We Craft It", desc: "Our artisans use premium fabrics and state-of-the-art printing to bring your vision to life.", icon: "⚡" },
+  { step: "03", title: "Fast Delivery", desc: "Packed with care, delivered express anywhere in Bangladesh within 3-7 business days.", icon: "🚀" },
 ];
 
 const TESTIMONIALS = [
-  { name: "Rakib Hasan", role: "Fashion Influencer", text: "TryNex is literally the best custom apparel brand in BD. The hoodie quality is insane — thick, premium, and the print doesn't fade. 10/10!", stars: 5, avatar: "R" },
-  { name: "Mithila Chowdhury", role: "Small Business Owner", text: "Ordered 50 custom tees for my brand launch. Every single one was perfect. The colors were exactly what I wanted. Will order again!", stars: 5, avatar: "M" },
-  { name: "Farhan Ahmed", role: "University Student", text: "Got a custom hoodie for my crew. Everyone was shocked at how premium it felt. The delivery was super fast too. Highly recommend!", stars: 5, avatar: "F" },
+  {
+    name: "Rakib Hasan", role: "Fashion Influencer", stars: 5,
+    text: "TryNex is literally the best custom apparel brand in BD. The hoodie quality is insane — thick, premium, and the print doesn't fade. 10/10!",
+    location: "Dhaka"
+  },
+  {
+    name: "Mithila Chowdhury", role: "Small Business Owner", stars: 5,
+    text: "Ordered 50 custom tees for my brand launch. Every single one was perfect. The colors were exactly what I wanted. Will order again!",
+    location: "Chittagong"
+  },
+  {
+    name: "Farhan Ahmed", role: "University Student", stars: 5,
+    text: "Got a custom hoodie for my crew. Everyone was shocked at how premium it felt. The delivery was super fast too. Highly recommend!",
+    location: "Sylhet"
+  },
+  {
+    name: "Nadia Islam", role: "Corporate Manager", stars: 5,
+    text: "We use TryNex for all our company merch now. Professional quality, great service, and the best prices in Bangladesh. Absolutely love it!",
+    location: "Rajshahi"
+  },
 ];
 
 const STATS = [
-  { value: "5K+", label: "Happy Customers", icon: "😊" },
-  { value: "98%", label: "Satisfaction Rate", icon: "⭐" },
-  { value: "48h", label: "Production Time", icon: "⚡" },
-  { value: "64", label: "Districts Served", icon: "🚀" },
+  { value: "5K+", label: "Happy Customers", icon: "😊", color: "#E85D04" },
+  { value: "98%", label: "Satisfaction Rate", icon: "⭐", color: "#eab308" },
+  { value: "48h", label: "Production Time", icon: "⚡", color: "#2563eb" },
+  { value: "64", label: "Districts Served", icon: "🗺️", color: "#16a34a" },
 ];
+
+const CATEGORIES = [
+  { name: "T-Shirts", emoji: "👕", desc: "Premium custom tees", count: "Starting ৳599", color: "#fff4ee", accent: "#E85D04" },
+  { name: "Hoodies", emoji: "🧥", desc: "320GSM premium fleece", count: "Starting ৳1,299", color: "#eff6ff", accent: "#2563eb" },
+  { name: "Caps", emoji: "🧢", desc: "Embroidered & printed", count: "Starting ৳499", color: "#f0fdf4", accent: "#16a34a" },
+  { name: "Mugs", emoji: "☕", desc: "Ceramic & sublimation", count: "Starting ৳399", color: "#fdf4ff", accent: "#9333ea" },
+  { name: "Custom", emoji: "✨", desc: "Anything you imagine", count: "Get a quote", color: "#fffbeb", accent: "#d97706" },
+];
+
+function CountdownTimer() {
+  const SALE_END = new Date();
+  SALE_END.setHours(SALE_END.getHours() + 5, 30, 0, 0);
+
+  const [timeLeft, setTimeLeft] = useState({ h: 5, m: 30, s: 0 });
+
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      const diff = Math.max(0, SALE_END.getTime() - now.getTime());
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTimeLeft({ h, m, s });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return (
+    <div className="flex items-center gap-2">
+      {[{ v: timeLeft.h, l: "HRS" }, { v: timeLeft.m, l: "MIN" }, { v: timeLeft.s, l: "SEC" }].map(({ v, l }, i) => (
+        <div key={l} className="flex items-center gap-2">
+          <div className="text-center">
+            <div className="px-3 py-2 rounded-xl font-black text-white text-xl min-w-[3rem] text-center"
+              style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 4px 12px rgba(232,93,4,0.4)' }}>
+              {pad(v)}
+            </div>
+            <p className="text-[9px] font-bold text-gray-400 mt-1 tracking-widest">{l}</p>
+          </div>
+          {i < 2 && <span className="text-orange-500 font-black text-xl mb-4">:</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function AnimatedCounter({ target, duration = 2000 }: { target: string, duration?: number }) {
   const [display, setDisplay] = useState("0");
@@ -74,7 +150,7 @@ function AnimatedCounter({ target, duration = 2000 }: { target: string, duration
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(eased * numPart * 10) / 10;
-      setDisplay(current + suffix);
+      setDisplay(current % 1 === 0 ? Math.round(current) + suffix : current + suffix);
       if (progress < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -84,321 +160,333 @@ function AnimatedCounter({ target, duration = 2000 }: { target: string, duration
 }
 
 export default function Home() {
-  const { data: featuredData, isLoading } = useListProducts({ featured: true, limit: 8 });
-  const featuredProducts = featuredData?.products || [];
-  const heroRef = useRef<HTMLElement>(null);
+  const { data: productsData, isLoading } = useListProducts({ limit: 8, featured: true });
+  const featuredProducts = productsData?.products || [];
+  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Layered background */}
-        <div className="absolute inset-0 hero-gradient grid-pattern" />
+      {/* ═══════════════════════════════════════
+          HERO SECTION
+      ═══════════════════════════════════════ */}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        style={{ paddingTop: '5rem' }}
+      >
+        {/* Warm gradient background */}
+        <div className="absolute inset-0"
+          style={{ background: 'linear-gradient(135deg, #FFFDF8 0%, #FFF4EA 40%, #FFEEDD 100%)' }} />
 
-        {/* Aurora orbs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] left-[50%] -translate-x-1/2 w-[900px] h-[600px] rounded-full blur-[120px] opacity-25"
-            style={{ background: 'radial-gradient(ellipse, rgba(255,107,43,0.7) 0%, rgba(255,107,43,0.2) 50%, transparent 70%)' }} />
-          <div className="absolute bottom-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full blur-[100px] opacity-15 float-slow"
-            style={{ background: 'radial-gradient(circle, rgba(255,152,64,0.6), transparent)' }} />
-          <div className="absolute top-[60%] left-[-5%] w-[350px] h-[350px] rounded-full blur-[80px] opacity-10 float-delayed"
-            style={{ background: 'radial-gradient(circle, rgba(255,107,43,0.5), transparent)' }} />
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full blur-3xl opacity-30"
+            style={{ background: 'radial-gradient(circle, rgba(251,133,0,0.4), transparent)' }} />
+          <div className="absolute bottom-0 -left-20 w-80 h-80 rounded-full blur-3xl opacity-20"
+            style={{ background: 'radial-gradient(circle, rgba(232,93,4,0.3), transparent)' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl opacity-10"
+            style={{ background: 'radial-gradient(circle, rgba(232,93,4,0.5), transparent)' }} />
         </div>
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-28 pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        {/* Dot grid pattern */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'radial-gradient(circle, #E85D04 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
-            {/* Left */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full luxury-badge text-sm font-bold mb-8"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                Premium Custom Apparel · Bangladesh 🇧🇩
-              </motion.div>
+        <motion.div
+          style={{ y: heroY }}
+          className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
+        >
+          {/* Launch badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 font-bold text-sm"
+            style={{ background: 'linear-gradient(135deg, #fff4ee, #ffe8d4)', color: '#E85D04', border: '1.5px solid #fdd5b4' }}
+          >
+            <Flame className="w-4 h-4" />
+            Bangladesh's #1 Custom Apparel Brand
+            <span className="px-2 py-0.5 rounded-full text-xs text-white font-black"
+              style={{ background: '#E85D04' }}>NEW</span>
+          </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="text-[clamp(3.5rem,9vw,6.5rem)] font-black font-display tracking-tighter leading-[0.9] mb-8"
-              >
-                You imagine,<br />
-                <span className="text-gradient">we craft.</span>
-              </motion.h1>
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="font-display font-black leading-tight mb-6 text-gray-900"
+            style={{ fontSize: 'clamp(3rem, 9vw, 6rem)', letterSpacing: '-0.03em' }}
+          >
+            You Imagine,
+            <br />
+            <span style={{
+              background: 'linear-gradient(135deg, #E85D04 0%, #FB8500 50%, #E85D04 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              We Craft.
+            </span>
+          </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.25 }}
-                className="text-xl text-foreground/50 mb-10 max-w-lg leading-relaxed font-medium"
-              >
-                Elevate your wardrobe with bespoke premium apparel. Your design, our craftsmanship — delivered with pride across Bangladesh.
-              </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
+            Premium custom T-shirts, Hoodies, Mugs & Caps delivered across all 64 districts of Bangladesh.
+            Starting from just <strong className="text-gray-800">৳399</strong>.
+          </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.35 }}
-                className="flex flex-col sm:flex-row gap-4 mb-14"
-              >
-                <Link
-                  href="/products"
-                  className="btn-glow inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-2xl font-bold text-white text-lg group"
-                  style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))', boxShadow: '0 12px 50px rgba(255,107,43,0.4), 0 4px 16px rgba(255,107,43,0.3)' }}
-                >
-                  Shop Collection
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  href="/track"
-                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-2xl font-bold text-foreground/70 hover:text-foreground transition-all duration-300 hover:border-white/15"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
-                >
-                  Track Order
-                </Link>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.9, delay: 0.5 }}
-                className="grid grid-cols-4 gap-4 pt-10 border-t border-white/5"
-              >
-                {STATS.map((s, i) => (
-                  <motion.div key={s.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 + i * 0.08 }}
-                  >
-                    <div className="text-2xl md:text-3xl font-black text-gradient font-display">
-                      <AnimatedCounter target={s.value} />
-                    </div>
-                    <div className="text-xs text-foreground/35 mt-1 font-semibold leading-tight">{s.label}</div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* Right — 3D Showcase */}
-            <motion.div
-              initial={{ opacity: 0, x: 60, rotateY: -10 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="hidden lg:block relative perspective-deep"
-              style={{ perspective: '1000px' }}
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-14"
+          >
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center gap-2.5 px-10 py-4 rounded-2xl font-bold text-white text-lg transition-all hover:-translate-y-1"
+              style={{
+                background: 'linear-gradient(135deg, #E85D04, #FB8500)',
+                boxShadow: '0 8px 32px rgba(232,93,4,0.4)'
+              }}
             >
-              <div className="relative w-full aspect-square max-w-lg mx-auto">
-                {/* Main 3D card */}
-                <motion.div
-                  animate={{ y: [-8, 8, -8], rotateX: [1, -1, 1], rotateZ: [0.5, -0.5, 0.5] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute inset-0 rounded-[2.5rem] overflow-hidden depth-card card-shine"
-                  style={{
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    background: 'hsl(0 0% 8%)',
-                    boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,107,43,0.1), 0 20px 60px rgba(255,107,43,0.15)',
-                    transformStyle: 'preserve-3d'
-                  }}
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=700&h=700&fit=crop"
-                    alt="Premium apparel"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 80%)' }} />
-                  <div className="absolute bottom-8 left-8 right-8">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold luxury-badge mb-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary pulse-dot" />
-                      Featured Collection
-                    </div>
-                    <p className="text-2xl font-black text-white leading-tight">Premium Hoodie Collection</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      {[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />)}
-                      <span className="text-xs text-white/50 ml-1.5 font-medium">(248 reviews)</span>
-                    </div>
-                  </div>
-                </motion.div>
+              Shop Now <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/track"
+              className="inline-flex items-center justify-center gap-2.5 px-10 py-4 rounded-2xl font-bold text-gray-700 text-lg transition-all hover:border-orange-400 hover:text-orange-600"
+              style={{ background: 'white', border: '2px solid #e5e7eb' }}
+            >
+              Track Order
+            </Link>
+          </motion.div>
 
-                {/* Floating top-right badge */}
-                <motion.div
-                  animate={{ y: [-6, 6, -6], rotate: [-2, 2, -2] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-5 -right-5 px-5 py-3 rounded-2xl z-10"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))',
-                    boxShadow: '0 12px 40px rgba(255,107,43,0.6), 0 4px 16px rgba(255,107,43,0.4)'
-                  }}
-                >
-                  <p className="text-white text-xs font-black tracking-wide">🚚 FREE DELIVERY</p>
-                  <p className="text-white/75 text-[10px] font-semibold">above ৳1,500</p>
-                </motion.div>
-
-                {/* Floating bottom-left card */}
-                <motion.div
-                  animate={{ y: [6, -6, 6], rotate: [1, -1, 1] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                  className="absolute -bottom-5 -left-5 px-5 py-4 rounded-2xl z-10 glass-dark"
-                  style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.6)', minWidth: '180px' }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: 'rgba(255,107,43,0.15)' }}>✨</div>
-                    <div>
-                      <p className="text-xs text-foreground/45 font-semibold">New Drop</p>
-                      <p className="text-foreground font-black text-sm">Summer 2025 ✦</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Floating stars card */}
-                <motion.div
-                  animate={{ y: [4, -4, 4] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-                  className="absolute top-1/3 -left-8 px-4 py-3 rounded-2xl z-10 glass-dark text-center"
-                  style={{ boxShadow: '0 16px 40px rgba(0,0,0,0.5)' }}
-                >
-                  <div className="flex gap-0.5 mb-1">
-                    {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />)}
-                  </div>
-                  <p className="text-xs font-black text-foreground">5K+ Happy</p>
-                  <p className="text-[10px] text-foreground/40 font-medium">Customers</p>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
+          {/* Trust micro-badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.45 }}
+            className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-500"
+          >
+            {[
+              { icon: "🚚", text: "Free Shipping above ৳1,500" },
+              { icon: "⚡", text: "48h Production" },
+              { icon: "✅", text: "100% Satisfaction" },
+              { icon: "💳", text: "bKash • Nagad • COD" },
+            ].map(({ icon, text }) => (
+              <span key={text} className="flex items-center gap-2 font-semibold">
+                <span>{icon}</span>
+                <span>{text}</span>
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
 
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none" style={{ background: 'linear-gradient(to top, hsl(var(--background)), transparent)' }} />
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
-          <div className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center pt-1.5">
-            <div className="w-1 h-2 rounded-full bg-white scroll-indicator" />
+        {/* Scroll hint */}
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-400 text-xs flex flex-col items-center gap-1"
+        >
+          <div className="w-5 h-8 rounded-full border-2 border-gray-300 flex items-start justify-center pt-1.5">
+            <div className="w-1 h-2 rounded-full bg-orange-400"></div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── MARQUEE TICKER ──────────────────────────────────────── */}
-      <div className="py-5 overflow-hidden relative" style={{ background: 'hsl(0 0% 5%)' }}>
-        <div className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(90deg, hsl(0 0% 5%), transparent)' }} />
-        <div className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(270deg, hsl(0 0% 5%), transparent)' }} />
-        <div className="section-divider absolute top-0 left-0 right-0" />
-        <div className="section-divider absolute bottom-0 left-0 right-0" />
-        <div className="marquee-inner">
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="flex items-center gap-5 mx-5 text-xs font-black uppercase tracking-widest text-foreground/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+      {/* ═══════════════════════════════════════
+          MARQUEE TICKER
+      ═══════════════════════════════════════ */}
+      <section className="py-4 overflow-hidden border-y border-orange-100"
+        style={{ background: 'linear-gradient(135deg, #FFF4EA, #FFF8F2)' }}>
+        <div className="animate-marquee">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span key={i} className="flex items-center gap-4 px-6 text-sm font-black tracking-widest"
+              style={{ color: '#E85D04' }}>
               {item}
+              <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
             </span>
           ))}
         </div>
-      </div>
-
-      {/* ── FEATURED PRODUCTS ────────────────────────────────────── */}
-      <section className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16"
-        >
-          <div>
-            <div className="section-eyebrow">
-              <Sparkles className="w-3 h-3" />
-              Featured Collection
-            </div>
-            <h2 className="text-[clamp(2.5rem,6vw,4rem)] font-black font-display tracking-tighter leading-tight">
-              Bestsellers That<br />
-              <span className="text-gradient">People Love</span>
-            </h2>
-          </div>
-          <Link href="/products" className="inline-flex items-center gap-2 font-bold text-foreground/45 hover:text-primary transition-colors text-sm group shrink-0">
-            View All Products
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
-
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.slice(0, 8).map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-            {featuredProducts.length === 0 && (
-              <div className="col-span-full py-20 text-center text-foreground/30">
-                <Package className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                <p className="text-lg font-semibold">Products loading...</p>
-              </div>
-            )}
-          </div>
-        )}
       </section>
 
-      {/* ── WHY TRYNEX ────────────────────────────────────────────── */}
-      <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 mesh-gradient" />
-        <div className="absolute inset-0 grid-pattern opacity-40" />
-        <div className="section-divider absolute top-0 left-0 right-0" />
-        <div className="section-divider absolute bottom-0 left-0 right-0" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* ═══════════════════════════════════════
+          FLASH SALE BANNER
+      ═══════════════════════════════════════ */}
+      <section className="py-8 px-4" style={{ background: 'white' }}>
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-18"
+            className="relative overflow-hidden rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6"
+            style={{
+              background: 'linear-gradient(135deg, #1C1917 0%, #292524 100%)',
+              border: '1px solid rgba(232,93,4,0.2)'
+            }}
           >
-            <div className="section-eyebrow mx-auto w-fit mb-4">
-              <Award className="w-3 h-3" />
-              Why TryNex
-            </div>
-            <h2 className="text-[clamp(2.5rem,6vw,4rem)] font-black font-display tracking-tighter">
-              Crafted with care,<br />
-              <span className="text-gradient">delivered with pride.</span>
-            </h2>
-          </motion.div>
+            {/* Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20"
+              style={{ background: 'radial-gradient(circle, #E85D04, transparent)' }} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
+            <div className="relative text-white">
+              <div className="flex items-center gap-2 mb-2">
+                <Flame className="w-5 h-5 text-orange-400" />
+                <span className="text-orange-400 font-bold text-sm uppercase tracking-widest">Flash Sale</span>
+              </div>
+              <h2 className="text-3xl font-black font-display mb-1">Up to <span style={{ color: '#FB8500' }}>30% OFF</span></h2>
+              <p className="text-gray-400 text-sm">On selected T-shirts & Hoodies. Limited stock!</p>
+            </div>
+
+            <div className="flex flex-col items-center gap-3 relative">
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Ends in</p>
+              <CountdownTimer />
+            </div>
+
+            <Link
+              href="/products"
+              className="relative px-8 py-4 rounded-2xl font-bold text-gray-900 text-base flex items-center gap-2 transition-all hover:-translate-y-1"
+              style={{ background: 'linear-gradient(135deg, #FB8500, #E85D04)', boxShadow: '0 6px 24px rgba(232,93,4,0.4)' }}
+            >
+              <Flame className="w-4 h-4" /> Shop the Sale
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          CATEGORIES GRID
+      ═══════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background: '#FAFAFA' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="section-eyebrow mb-4">
+              <Package className="w-3 h-3" /> Our Collections
+            </span>
+            <h2 className="section-heading mt-4">
+              Shop by Category
+            </h2>
+            <p className="text-gray-500 mt-4 max-w-xl mx-auto">
+              From premium tees to cozy hoodies — every product made with care, ready for your custom design.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {CATEGORIES.map((cat, i) => (
+              <motion.div
+                key={cat.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07 }}
+                whileHover={{ y: -4 }}
+              >
+                <Link href="/products"
+                  className="flex flex-col items-center p-6 rounded-2xl text-center transition-all cursor-pointer group border"
+                  style={{ background: cat.color, borderColor: `${cat.accent}20` }}>
+                  <div className="text-5xl mb-4">{cat.emoji}</div>
+                  <h3 className="font-black text-gray-900 text-base mb-1">{cat.name}</h3>
+                  <p className="text-xs text-gray-500 mb-3">{cat.desc}</p>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full"
+                    style={{ background: `${cat.accent}15`, color: cat.accent }}>
+                    {cat.count}
+                  </span>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          FEATURED PRODUCTS
+      ═══════════════════════════════════════ */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div>
+              <span className="section-eyebrow mb-4">
+                <Sparkles className="w-3 h-3" /> Featured Products
+              </span>
+              <h2 className="section-heading mt-4">Best Sellers</h2>
+              <p className="text-gray-500 mt-3 max-w-lg">Our most-loved products — hand-picked for quality and style.</p>
+            </div>
+            <Link href="/products"
+              className="flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors shrink-0">
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden">
+                  <div className="skeleton aspect-[4/5]" />
+                  <div className="p-4 space-y-2">
+                    <div className="skeleton h-4 rounded w-3/4" />
+                    <div className="skeleton h-4 rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+              {featuredProducts.map((product, i) => (
+                <ProductCard key={product.id} product={product} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          FEATURES / WHY CHOOSE US
+      ═══════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FFF8F3 0%, #FFF4EC 100%)' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="section-eyebrow mb-4">
+              <Award className="w-3 h-3" /> Why TryNex?
+            </span>
+            <h2 className="section-heading mt-4">Built for Bangladesh</h2>
+            <p className="text-gray-500 mt-4 max-w-xl mx-auto">
+              We combine premium quality, lightning-fast production, and Bangladesh-first service — all in one brand.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {FEATURES.map((f, i) => {
               const Icon = f.icon;
               return (
                 <motion.div
                   key={f.title}
-                  initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.12, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                  className="p-8 rounded-3xl card-glow card-shine relative overflow-hidden group"
-                  style={{ background: 'hsl(0 0% 6.5%)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  transition={{ delay: i * 0.15, duration: 0.6 }}
+                  whileHover={{ y: -6 }}
+                  className="p-8 rounded-3xl text-center border"
+                  style={{ background: 'white', borderColor: `${f.color}20`, boxShadow: `0 4px 24px ${f.color}08` }}
                 >
-                  {/* Glow orb on hover */}
-                  <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"
-                    style={{ background: `radial-gradient(circle, ${f.color}20, transparent)` }} />
-
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-7 relative"
-                    style={{ background: `${f.color}12`, border: `1px solid ${f.color}25`, boxShadow: `0 8px 24px ${f.color}15` }}>
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
+                    style={{ background: f.bg, border: `1.5px solid ${f.color}25` }}>
                     <Icon className="w-7 h-7" style={{ color: f.color }} />
                   </div>
-                  <div className="inline-flex text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full mb-4"
-                    style={{ background: `${f.color}10`, border: `1px solid ${f.color}25`, color: f.color }}>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black mb-4"
+                    style={{ background: f.bg, color: f.color }}>
                     {f.badge}
-                  </div>
-                  <h3 className="text-xl font-black mb-3">{f.title}</h3>
-                  <p className="text-foreground/40 leading-relaxed text-sm">{f.desc}</p>
+                  </span>
+                  <h3 className="text-xl font-black text-gray-900 mb-3">{f.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
                 </motion.div>
               );
             })}
@@ -406,119 +494,112 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ──────────────────────────────────────────── */}
-      <section className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-18"
-        >
-          <div className="section-eyebrow mx-auto w-fit mb-4">
-            <Zap className="w-3 h-3" />
-            How It Works
+      {/* ═══════════════════════════════════════
+          HOW IT WORKS
+      ═══════════════════════════════════════ */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="section-eyebrow mb-4">
+              <Clock className="w-3 h-3" /> How It Works
+            </span>
+            <h2 className="section-heading mt-4">Simple as 1-2-3</h2>
           </div>
-          <h2 className="text-[clamp(2.2rem,5vw,3.5rem)] font-black font-display tracking-tighter">
-            From idea to delivery,<br />
-            <span className="text-gradient">3 simple steps.</span>
-          </h2>
-        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          {/* Connector line */}
-          <div className="hidden md:block absolute top-14 left-1/3 right-1/3 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,107,43,0.4), rgba(255,107,43,0.1))' }} />
-
-          {PROCESS.map((p, i) => (
-            <motion.div
-              key={p.step}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, duration: 0.6 }}
-              className="relative text-center"
-            >
-              <div className="relative inline-flex mb-7">
-                <div className="w-28 h-28 rounded-full flex flex-col items-center justify-center relative z-10"
-                  style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,107,43,0.2)', boxShadow: '0 8px 40px rgba(255,107,43,0.15)' }}>
-                  <span className="text-3xl font-black text-gradient font-display">{p.step}</span>
-                </div>
-                {i < 2 && (
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full hidden md:flex items-center px-4">
-                    <ArrowRight className="w-5 h-5 text-primary/40" />
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {PROCESS.map((p, i) => (
+              <motion.div
+                key={p.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="text-center relative"
+              >
+                {i < PROCESS.length - 1 && (
+                  <div className="hidden md:block absolute top-10 left-1/2 w-full h-0.5"
+                    style={{ background: 'linear-gradient(90deg, #fb8500, #fbd580)' }} />
                 )}
-              </div>
-              <h3 className="text-lg font-black mb-3">{p.title}</h3>
-              <p className="text-sm text-foreground/40 leading-relaxed max-w-xs mx-auto">{p.desc}</p>
-            </motion.div>
-          ))}
+                <div className="relative z-10 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg"
+                  style={{ background: 'linear-gradient(135deg, #fff4ee, #ffe8d4)', border: '2px solid #fdd5b4' }}>
+                  {p.icon}
+                </div>
+                <div className="text-xs font-black text-orange-400 tracking-widest mb-2">STEP {p.step}</div>
+                <h3 className="text-lg font-black text-gray-900 mb-2">{p.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{p.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-14 text-center"
-        >
-          <Link href="/products"
-            className="btn-glow inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-white text-base"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))', boxShadow: '0 8px 40px rgba(255,107,43,0.35)' }}
-          >
-            Start Your Custom Order
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </motion.div>
       </section>
 
-      {/* ── TESTIMONIALS ──────────────────────────────────────────── */}
-      <section className="py-28 relative overflow-hidden" style={{ background: 'hsl(0 0% 4%)' }}>
-        <div className="absolute inset-0 grid-pattern-fine opacity-30" />
-        <div className="section-divider absolute top-0 left-0 right-0" />
-        <div className="section-divider absolute bottom-0 left-0 right-0" />
+      {/* ═══════════════════════════════════════
+          STATS
+      ═══════════════════════════════════════ */}
+      <section className="py-16 px-4" style={{ background: '#1C1917' }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {STATS.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-4xl mb-3">{stat.icon}</div>
+                <div className="text-4xl font-black font-display text-white mb-1"
+                  style={{ color: stat.color }}>
+                  <AnimatedCounter target={stat.value} />
+                </div>
+                <p className="text-gray-500 text-sm font-semibold">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="section-eyebrow mx-auto w-fit mb-4">
-              <Star className="w-3 h-3 fill-primary" />
-              Customer Love
-            </div>
-            <h2 className="text-[clamp(2.2rem,5vw,3.5rem)] font-black font-display tracking-tighter">
-              What our customers<br />
-              <span className="text-gradient">say about us.</span>
+      {/* ═══════════════════════════════════════
+          TESTIMONIALS
+      ═══════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FFF4EC 100%)' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="section-eyebrow mb-4">
+              <Star className="w-3 h-3" /> Testimonials
+            </span>
+            <h2 className="section-heading mt-4">
+              Loved Across Bangladesh
             </h2>
-          </motion.div>
+            <p className="text-gray-500 mt-4">Real reviews from real customers — from Dhaka to Chittagong.</p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <motion.div
                 key={t.name}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                whileHover={{ y: -6, transition: { duration: 0.3 } }}
-                className="p-7 rounded-3xl card-shine relative"
-                style={{ background: 'hsl(0 0% 6.5%)', border: '1px solid rgba(255,255,255,0.07)' }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -4 }}
+                className="p-6 rounded-2xl bg-white border border-gray-100 shadow-sm"
               >
-                <div className="flex gap-1 mb-5">
-                  {Array(t.stars).fill(0).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-primary text-primary" />
+                <div className="flex mb-3">
+                  {Array.from({ length: t.stars }).map((_, j) => (
+                    <Star key={j} className="w-4 h-4 fill-orange-400 text-orange-400" />
                   ))}
                 </div>
-                <p className="text-sm text-foreground/60 leading-relaxed mb-6 italic">"{t.text}"</p>
+                <p className="text-sm text-gray-600 leading-relaxed mb-5">"{t.text}"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm shrink-0"
-                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))' }}>
-                    {t.avatar}
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm"
+                    style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)' }}>
+                    {t.name[0]}
                   </div>
                   <div>
-                    <p className="font-bold text-sm">{t.name}</p>
-                    <p className="text-xs text-foreground/35">{t.role}</p>
+                    <p className="font-bold text-sm text-gray-900">{t.name}</p>
+                    <p className="text-xs text-gray-400">{t.role} · {t.location}</p>
                   </div>
                 </div>
               </motion.div>
@@ -527,66 +608,91 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA BANNER ───────────────────────────────────────────── */}
-      <section className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative overflow-hidden rounded-[2.5rem] text-center py-24 px-8 aurora-bg noise"
-          style={{
-            background: 'linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(20 30% 7%) 50%, hsl(0 0% 6%) 100%)',
-            border: '1px solid rgba(255,107,43,0.2)',
-            boxShadow: '0 40px 120px rgba(0,0,0,0.5), 0 0 80px rgba(255,107,43,0.08)'
-          }}
-        >
-          {/* Center glow */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-[500px] h-[500px] rounded-full blur-[100px] opacity-25"
-              style={{ background: 'radial-gradient(circle, rgba(255,107,43,0.9), rgba(255,107,43,0.2), transparent)' }} />
+      {/* ═══════════════════════════════════════
+          TRUST BADGES
+      ═══════════════════════════════════════ */}
+      <section className="py-12 px-4 bg-white border-y border-gray-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: ShieldCheck, title: "100% Secure Payments", desc: "bKash, Nagad, Rocket & COD", color: "#16a34a", bg: "#f0fdf4" },
+              { icon: Truck, title: "Nationwide Delivery", desc: "All 64 districts of Bangladesh", color: "#2563eb", bg: "#eff6ff" },
+              { icon: BadgeCheck, title: "Quality Guarantee", desc: "230-320GSM premium fabric", color: "#E85D04", bg: "#fff4ee" },
+              { icon: Users, title: "5,000+ Happy Customers", desc: "98% satisfaction rate", color: "#9333ea", bg: "#fdf4ff" },
+            ].map(({ icon: Icon, title, desc, color, bg }) => (
+              <div key={title} className="flex items-center gap-3 p-4 rounded-2xl" style={{ background: bg }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: `${color}15` }}>
+                  <Icon className="w-5 h-5" style={{ color }} />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 text-sm leading-tight">{title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div className="relative z-10">
-            <div className="section-eyebrow mx-auto w-fit mb-6">
-              <Palette className="w-3 h-3" />
-              Custom Order
-            </div>
-            <h2 className="text-[clamp(2.5rem,7vw,5rem)] font-black font-display tracking-tighter mb-6 leading-tight">
+      {/* ═══════════════════════════════════════
+          CTA SECTION
+      ═══════════════════════════════════════ */}
+      <section className="py-24 px-4" style={{ background: 'linear-gradient(135deg, #1C1917 0%, #292524 100%)' }}>
+        <div className="max-w-3xl mx-auto text-center relative">
+          {/* Glow */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-96 h-96 rounded-full blur-3xl opacity-20"
+              style={{ background: 'radial-gradient(circle, #E85D04, transparent)' }} />
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative z-10"
+          >
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold mb-8"
+              style={{ background: 'rgba(232,93,4,0.2)', color: '#FB8500', border: '1px solid rgba(232,93,4,0.3)' }}>
+              <Palette className="w-4 h-4" /> Custom Order
+            </span>
+            <h2 className="font-display font-black text-white leading-tight mb-6"
+              style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', letterSpacing: '-0.03em' }}>
               Have a design in mind?<br />
-              <span className="text-gradient">Let's make it real.</span>
+              <span style={{ color: '#FB8500' }}>Let's make it real.</span>
             </h2>
-            <p className="text-foreground/45 text-lg max-w-lg mx-auto mb-12 leading-relaxed">
-              Share your idea — we handle design, print and delivery. 100% unique, 100% yours. Starting from just ৳750.
+            <p className="text-gray-400 text-lg max-w-lg mx-auto mb-12 leading-relaxed">
+              Share your idea — we handle design, print and delivery. 100% unique, 100% yours.
+              Starting from just <strong className="text-white">৳750</strong>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/products"
-                className="btn-glow inline-flex items-center gap-2.5 px-10 py-5 rounded-2xl font-bold text-white text-lg"
-                style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))', boxShadow: '0 12px 50px rgba(255,107,43,0.5)' }}
+                className="inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl font-bold text-white text-lg transition-all hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, #E85D04, #FB8500)',
+                  boxShadow: '0 8px 32px rgba(232,93,4,0.45)'
+                }}
               >
                 Start Designing <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 href="/track"
-                className="inline-flex items-center gap-2.5 px-10 py-5 rounded-2xl font-bold text-foreground/60 hover:text-foreground transition-all"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                className="inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl font-bold text-white text-lg transition-all"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1.5px solid rgba(255,255,255,0.12)' }}
               >
                 Track Your Order
               </Link>
             </div>
 
-            {/* Trust points */}
-            <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-xs font-semibold text-foreground/35">
-              {["Free shipping above ৳1,500", "48-hour production", "100% satisfaction guarantee", "Easy returns"].map(t => (
-                <span key={t} className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-primary" />
-                  {t}
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm font-semibold text-gray-500">
+              {["Free shipping above ৳1,500", "48-hour production", "100% satisfaction guarantee"].map(t => (
+                <span key={t} className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-orange-500" /> {t}
                 </span>
               ))}
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       <Footer />

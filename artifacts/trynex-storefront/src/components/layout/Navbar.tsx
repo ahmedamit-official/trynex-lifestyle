@@ -1,227 +1,222 @@
 import { Link, useLocation } from "wouter";
-import { ShoppingBag, Menu, X, ChevronDown, Search } from "lucide-react";
+import { ShoppingBag, Menu, X, ChevronDown, Heart, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
+const SHOP_CATEGORIES = [
+  { label: "All Products", href: "/products", emoji: "🛍️" },
+  { label: "T-Shirts", href: "/products", emoji: "👕" },
+  { label: "Hoodies", href: "/products", emoji: "🧥" },
+  { label: "Caps", href: "/products", emoji: "🧢" },
+  { label: "Mugs", href: "/products", emoji: "☕" },
+  { label: "Custom Orders", href: "/products", emoji: "✨" },
+];
+
 export function Navbar() {
   const [location] = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const { itemCount } = useCart();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const { count: wishlistCount } = useWishlist();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-      setIsScrolled(y > 40);
-      const doc = document.documentElement;
-      const total = doc.scrollHeight - doc.clientHeight;
-      setScrollProgress(total > 0 ? (y / total) * 100 : 0);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    setMobileOpen(false);
+    setShopOpen(false);
+  }, [location]);
+
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Shop All", href: "/products" },
-    { name: "Blog", href: "/blog" },
-    { name: "Track Order", href: "/track" },
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Shop", dropdown: true },
+    { href: "/blog", label: "Blog" },
+    { href: "/track", label: "Track Order" },
   ];
 
   return (
-    <>
-      {/* Scroll progress bar */}
-      <div className="fixed top-0 left-0 z-[60] h-[2px] bg-primary transition-all duration-100"
-        style={{ width: `${scrollProgress}%`, boxShadow: '0 0 8px rgba(255,107,43,0.6)' }} />
-
-      <header className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        isScrolled
-          ? "py-3 shadow-2xl shadow-black/60"
-          : "bg-transparent py-5"
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+        scrolled
+          ? "bg-white/98 backdrop-blur-xl shadow-md shadow-orange-100/50 border-b border-orange-100"
+          : "bg-white/95 backdrop-blur-md"
       )}
-        style={isScrolled ? {
-          background: 'rgba(6,6,6,0.92)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)'
-        } : {}}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-2 -ml-2 text-foreground/70 hover:text-primary transition-colors lg:hidden"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-0 group">
-            <span className="text-2xl font-black font-display tracking-tighter group-hover:opacity-90 transition-opacity">
-              <span className="text-foreground">TRY</span>
-              <span className="text-gradient">NEX</span>
-            </span>
-            <span className="ml-2 text-[9px] font-bold uppercase tracking-[0.2em] text-foreground/25 hidden sm:block self-end mb-0.5">Lifestyle</span>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black font-display text-base shadow-lg"
+              style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 4px 12px rgba(232,93,4,0.35)' }}
+            >
+              T
+            </div>
+            <div className="flex flex-col leading-none gap-0.5">
+              <span className="text-xl font-black font-display tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors">
+                TRY<span style={{ color: '#E85D04' }}>NEX</span>
+              </span>
+              <span className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase">Lifestyle</span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={cn(
-                  "relative px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-250 group",
-                  location === link.href
-                    ? "text-primary"
-                    : "text-foreground/55 hover:text-foreground"
-                )}
-              >
-                {link.name}
-                {location === link.href && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className="absolute inset-0 rounded-xl"
-                    style={{ background: 'rgba(255,107,43,0.1)', border: '1px solid rgba(255,107,43,0.2)' }}
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                  />
-                )}
-                {location !== link.href && (
-                  <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: 'rgba(255,255,255,0.04)' }} />
-                )}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-0.5">
+            {navLinks.map((link) =>
+              link.dropdown ? (
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setShopOpen(true)}
+                  onMouseLeave={() => setShopOpen(false)}
+                >
+                  <button
+                    className={cn(
+                      "flex items-center gap-1 px-4 py-2 rounded-xl font-semibold text-sm transition-all",
+                      location === link.href
+                        ? "text-orange-600 bg-orange-50"
+                        : "text-gray-600 hover:text-orange-600 hover:bg-orange-50"
+                    )}
+                  >
+                    {link.label}
+                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", shopOpen && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {shopOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden p-2 z-50"
+                      >
+                        {SHOP_CATEGORIES.map((cat) => (
+                          <Link
+                            key={cat.label}
+                            href={cat.href}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                          >
+                            <span className="text-base">{cat.emoji}</span>
+                            {cat.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "px-4 py-2 rounded-xl font-semibold text-sm transition-all",
+                    location === link.href
+                      ? "text-orange-600 bg-orange-50"
+                      : "text-gray-600 hover:text-orange-600 hover:bg-orange-50"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            {/* Wishlist */}
             <Link
-              href="/cart"
-              className="relative p-2.5 text-foreground/65 hover:text-primary transition-colors group"
+              href="/wishlist"
+              className="relative hidden sm:flex items-center p-2.5 rounded-xl text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all"
             >
-              <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-              <AnimatePresence>
-                {itemCount > 0 && (
-                  <motion.span
-                    key="badge"
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    transition={{ type: "spring", bounce: 0.6 }}
-                    className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 text-white text-[9px] font-black rounded-full flex items-center justify-center"
-                    style={{ background: 'hsl(var(--primary))', boxShadow: '0 2px 8px rgba(255,107,43,0.5)' }}
-                  >
-                    {itemCount > 9 ? '9+' : itemCount}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              <Heart className="w-5 h-5" />
+              {wishlistCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 w-[1.1rem] h-[1.1rem] text-[9px] font-black text-white rounded-full flex items-center justify-center"
+                  style={{ background: '#E85D04' }}
+                >
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
+            {/* Cart */}
             <Link
-              href="/products"
-              className="hidden sm:flex btn-glow items-center gap-2 ml-2 px-4 py-2 rounded-xl font-bold text-white text-xs"
-              style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 20px rgba(255,107,43,0.35)' }}
+              href="/cart"
+              className={cn(
+                "relative flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all",
+                itemCount > 0
+                  ? "text-white"
+                  : "text-gray-600 border border-gray-200 bg-white hover:border-orange-300 hover:text-orange-600"
+              )}
+              style={itemCount > 0 ? {
+                background: 'linear-gradient(135deg, #E85D04, #FB8500)',
+                boxShadow: '0 4px 16px rgba(232,93,4,0.3)'
+              } : undefined}
             >
-              Shop Now
+              <ShoppingCart className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {itemCount > 0 ? `Cart (${itemCount})` : "Cart"}
+              </span>
+              {itemCount > 0 && <span className="sm:hidden font-black text-xs">{itemCount}</span>}
             </Link>
+
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden p-2.5 rounded-xl text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 z-50 lg:hidden"
-              style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
-            />
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 250 }}
-              className="fixed top-0 left-0 bottom-0 w-[82%] max-w-sm z-50 flex flex-col lg:hidden"
-              style={{ background: 'hsl(0 0% 5%)', borderRight: '1px solid rgba(255,255,255,0.07)' }}
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center p-6 border-b border-white/5">
-                <Link href="/" className="text-2xl font-black font-display tracking-tighter" onClick={() => setMobileMenuOpen(false)}>
-                  TRY<span className="text-gradient">NEX</span>
-                </Link>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-foreground/40 hover:text-foreground rounded-xl transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Nav */}
-              <nav className="flex-1 flex flex-col p-5 gap-1.5 overflow-y-auto">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.06 }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center px-4 py-3.5 rounded-2xl font-semibold text-base transition-all duration-200",
-                        location === link.href
-                          ? "text-primary"
-                          : "text-foreground/55 hover:text-foreground hover:bg-white/5"
-                      )}
-                      style={location === link.href ? {
-                        background: 'rgba(255,107,43,0.1)',
-                        border: '1px solid rgba(255,107,43,0.2)'
-                      } : {}}
-                    >
-                      {link.name}
-                      {location === link.href && <span className="ml-auto text-primary/60 text-xs">●</span>}
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-
-              {/* Bottom */}
-              <div className="p-5 border-t border-white/5 space-y-3">
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden bg-white border-t border-gray-100"
+          >
+            <div className="px-4 py-4 space-y-1">
+              {navLinks.map((link) => (
                 <Link
-                  href="/cart"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-semibold text-foreground/55 hover:text-foreground hover:bg-white/5 transition-all"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  Cart
-                  {itemCount > 0 && (
-                    <span className="ml-auto px-2 py-0.5 rounded-full text-xs font-black text-white"
-                      style={{ background: 'hsl(var(--primary))' }}>{itemCount}</span>
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "flex items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all",
+                    location === link.href
+                      ? "text-orange-600 bg-orange-50"
+                      : "text-gray-700 hover:text-orange-600 hover:bg-orange-50"
                   )}
-                </Link>
-                <Link
-                  href="/products"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn-glow flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-bold text-white text-sm"
-                  style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), rgba(255,152,64,1))' }}
                 >
-                  Shop Collection
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-2 mt-2 border-t border-gray-100">
+                <Link
+                  href="/wishlist"
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all"
+                >
+                  <Heart className="w-4 h-4" />
+                  Wishlist {wishlistCount > 0 && `(${wishlistCount})`}
                 </Link>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </header>
   );
 }

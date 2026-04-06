@@ -9,12 +9,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Save, Store, Phone, Globe, CreditCard, Truck, MessageCircle, Type } from "lucide-react";
 
 const inputClass = "w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-foreground/20";
-const inputStyle = { background: 'hsl(0 0% 9.5%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' };
+const inputStyle = { background: 'hsl(0 0% 9.5%)', border: '1px solid #e5e7eb', color: '#111827' };
 
 const SectionCard = ({ icon: Icon, title, iconColor = "hsl(var(--primary))", children }: {
   icon: any; title: string; iconColor?: string; children: React.ReactNode;
 }) => (
-  <div className="rounded-2xl overflow-hidden" style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+  <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
     <div className="flex items-center gap-3 px-6 py-4 border-b border-white/5" style={{ background: 'hsl(0 0% 7.5%)' }}>
       <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}25` }}>
         <Icon className="w-4 h-4" style={{ color: iconColor }} />

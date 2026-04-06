@@ -152,12 +152,12 @@ export default function AdminOrders() {
               </motion.span>
             )}
           </h1>
-          {lastRefresh && <p className="text-xs text-foreground/30 mt-1">Auto-refreshes every 30s · Last: {lastRefresh}</p>}
+          {lastRefresh && <p className="text-xs text-gray-400 mt-1">Auto-refreshes every 30s · Last: {lastRefresh}</p>}
         </div>
         <button
           onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-foreground/50 hover:text-foreground hover:bg-white/5"
-          style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+          style={{ background: 'white', border: '1px solid #e5e7eb' }}
         >
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
@@ -166,16 +166,16 @@ export default function AdminOrders() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         {[
-          { label: "Total", count: data?.total ?? 0, cls: 'text-foreground' },
+          { label: "Total", count: data?.total ?? 0, cls: 'text-gray-900' },
           { label: "Pending", count: (data?.orders ?? []).filter(o => o.status === 'pending').length, cls: 'text-yellow-400' },
           { label: "Processing", count: (data?.orders ?? []).filter(o => o.status === 'processing').length, cls: 'text-blue-400' },
           { label: "Shipped", count: (data?.orders ?? []).filter(o => ['shipped', 'ongoing'].includes(o.status)).length, cls: 'text-purple-400' },
           { label: "Delivered", count: (data?.orders ?? []).filter(o => o.status === 'delivered').length, cls: 'text-green-400' },
         ].map(s => (
           <div key={s.label} className="p-4 rounded-2xl text-center"
-            style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            style={{ background: '#f9fafb', border: '1px solid #f3f4f6' }}>
             <p className={`text-2xl font-black ${s.cls}`}>{s.count}</p>
-            <p className="text-xs font-semibold text-foreground/30 uppercase tracking-wide mt-1">{s.label}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{s.label}</p>
           </div>
         ))}
       </div>
@@ -183,13 +183,13 @@ export default function AdminOrders() {
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6 flex-wrap">
         <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by order #, name, phone..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary"
-            style={{ background: 'hsl(0 0% 8%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' }}
+            style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -197,10 +197,10 @@ export default function AdminOrders() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-2 rounded-xl text-xs font-bold capitalize transition-all ${statusFilter === s ? 'text-white' : 'text-foreground/40 hover:text-foreground'}`}
+              className={`px-3 py-2 rounded-xl text-xs font-bold capitalize transition-all ${statusFilter === s ? 'text-white' : 'text-gray-500 hover:text-gray-900'}`}
               style={statusFilter === s
                 ? { background: 'hsl(var(--primary))', boxShadow: '0 4px 16px rgba(255,107,43,0.3)' }
-                : { background: 'hsl(0 0% 8%)', border: '1px solid rgba(255,255,255,0.07)' }}
+                : { background: '#f9fafb', border: '1px solid #e5e7eb' }}
             >
               {s}
             </button>
@@ -209,13 +209,13 @@ export default function AdminOrders() {
       </div>
 
       {isLoading ? <Loader /> : (
-        <div className="rounded-2xl overflow-hidden" style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ background: 'hsl(0 0% 8%)' }}>
+                <tr style={{ background: '#f9fafb' }}>
                   {["Order #", "Date", "Customer", "Total", "Payment", "Pay Status", "Order Status", "Action"].map(h => (
-                    <th key={h} className="px-4 py-4 text-left text-[10px] font-black text-foreground/25 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                    <th key={h} className="px-4 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -235,15 +235,15 @@ export default function AdminOrders() {
                         className="border-t border-white/5 hover:bg-white/[0.02] transition-colors group"
                       >
                         <td className="px-4 py-4 font-mono text-xs font-bold text-primary whitespace-nowrap">{order.orderNumber}</td>
-                        <td className="px-4 py-4 text-xs text-foreground/35 whitespace-nowrap">
+                        <td className="px-4 py-4 text-xs text-gray-500 whitespace-nowrap">
                           {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-BD', { day: '2-digit', month: 'short' }) : 'N/A'}
                           <br />
-                          <span className="text-foreground/20">{order.createdAt ? new Date(order.createdAt).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                          <span className="text-gray-300">{order.createdAt ? new Date(order.createdAt).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
                         </td>
                         <td className="px-4 py-4">
                           <p className="font-bold text-sm leading-tight">{order.customerName}</p>
-                          <p className="text-xs text-foreground/35">{order.customerPhone}</p>
-                          <p className="text-[10px] text-foreground/20">{order.shippingDistrict}</p>
+                          <p className="text-xs text-gray-500">{order.customerPhone}</p>
+                          <p className="text-[10px] text-gray-300">{order.shippingDistrict}</p>
                         </td>
                         <td className="px-4 py-4">
                           <p className="font-black text-primary text-sm">{formatPrice(order.total)}</p>
@@ -307,7 +307,7 @@ export default function AdminOrders() {
                   <tr>
                     <td colSpan={8} className="px-6 py-16 text-center">
                       <Package className="w-12 h-12 mx-auto mb-4 opacity-15" />
-                      <p className="text-foreground/30 text-sm font-medium">
+                      <p className="text-gray-400 text-sm font-medium">
                         {search ? `No orders matching "${search}"` : 'No orders yet.'}
                       </p>
                     </td>
@@ -335,46 +335,46 @@ export default function AdminOrders() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               className="w-full max-w-lg rounded-3xl overflow-hidden max-h-[85vh] overflow-y-auto"
-              style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.1)' }}
+              style={{ background: 'white', border: '1px solid #e5e7eb' }}
             >
               <div className="p-6 border-b border-white/5 flex items-start justify-between sticky top-0 z-10"
-                style={{ background: 'hsl(0 0% 7%)' }}>
+                style={{ background: 'white' }}>
                 <div>
                   <p className="text-xs font-black text-primary uppercase tracking-widest mb-1">Order Details</p>
                   <h2 className="text-xl font-black font-display">{selectedOrder.orderNumber}</h2>
-                  <p className="text-xs text-foreground/30 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString('en-BD') : ''}
                   </p>
                 </div>
                 <button onClick={() => setSelectedOrder(null)}
-                  className="p-2 text-foreground/30 hover:text-foreground rounded-xl"
-                  style={{ background: 'rgba(255,255,255,0.05)' }}>
+                  className="p-2 text-gray-400 hover:text-gray-900 rounded-xl"
+                  style={{ background: '#fff4ee' }}>
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Customer */}
-                <div className="p-4 rounded-2xl" style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-3">Customer Info</p>
+                <div className="p-4 rounded-2xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Customer Info</p>
                   <p className="font-black">{selectedOrder.customerName}</p>
-                  <p className="text-sm text-foreground/50">{selectedOrder.customerEmail}</p>
-                  <p className="text-sm text-foreground/50">{selectedOrder.customerPhone}</p>
-                  <p className="text-sm text-foreground/40 mt-2">{selectedOrder.shippingAddress}, {selectedOrder.shippingDistrict}</p>
+                  <p className="text-sm text-gray-500">{selectedOrder.customerEmail}</p>
+                  <p className="text-sm text-gray-500">{selectedOrder.customerPhone}</p>
+                  <p className="text-sm text-gray-500 mt-2">{selectedOrder.shippingAddress}, {selectedOrder.shippingDistrict}</p>
                 </div>
 
                 {/* Payment Controls */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-2">Payment Method</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Payment Method</p>
                     <div className="p-3 rounded-xl font-bold text-sm capitalize"
-                      style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.04)', color: PAYMENT_LABELS[selectedOrder.paymentMethod]?.color || '#aaa' }}>
+                      style={{ background: '#fff8f5', border: '1px solid #fed7aa', color: PAYMENT_LABELS[selectedOrder.paymentMethod]?.color || '#aaa' }}>
                       {PAYMENT_LABELS[selectedOrder.paymentMethod]?.label || selectedOrder.paymentMethod}
                     </div>
                   </div>
                   {selectedOrder.paymentMethod !== 'cod' && (
                     <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-2">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
                         <CreditCard className="inline w-3 h-3 mr-1" />Payment Status
                       </p>
                       <select
@@ -382,7 +382,7 @@ export default function AdminOrders() {
                         onChange={e => handlePaymentStatusChange(selectedOrder.id, e.target.value)}
                         disabled={isUpdatingPayment}
                         className="w-full px-3 py-3 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer"
-                        style={{ background: 'hsl(0 0% 10%)', border: '1px solid rgba(255,255,255,0.08)', color: 'hsl(var(--foreground))' }}
+                        style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
                       >
                         {PAYMENT_STATUS_OPTS.map(opt => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -396,20 +396,20 @@ export default function AdminOrders() {
                   <div className="p-4 rounded-xl"
                     style={{ background: 'rgba(255,107,43,0.05)', border: '1px solid rgba(255,107,43,0.15)' }}>
                     <p className="text-xs font-black uppercase tracking-widest text-primary mb-2">Notes / Payment Info</p>
-                    <p className="text-sm text-foreground/50 font-mono">{selectedOrder.notes}</p>
+                    <p className="text-sm text-gray-500 font-mono">{selectedOrder.notes}</p>
                   </div>
                 )}
 
                 {/* Items */}
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-3">Items</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Items</p>
                   <div className="space-y-2">
                     {(selectedOrder.items ?? []).map((item: any, i: number) => (
                       <div key={i} className="flex items-center justify-between p-3 rounded-xl"
-                        style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                        style={{ background: '#fff8f5', border: '1px solid #fed7aa' }}>
                         <div>
                           <p className="font-bold text-sm">{item.productName}</p>
-                          <p className="text-xs text-foreground/35">
+                          <p className="text-xs text-gray-500">
                             Qty: {item.quantity}
                             {item.size ? ` · Size: ${item.size}` : ''}
                             {item.color ? ` · ${item.color}` : ''}
@@ -423,13 +423,13 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Totals */}
-                <div className="p-4 rounded-2xl" style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="p-4 rounded-2xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                   <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-foreground/40">Subtotal</span>
+                    <span className="text-gray-500">Subtotal</span>
                     <span className="font-semibold">{formatPrice(selectedOrder.subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm mb-3">
-                    <span className="text-foreground/40">Shipping</span>
+                    <span className="text-gray-500">Shipping</span>
                     <span className={selectedOrder.shippingCost === 0 ? "font-bold text-green-400" : "font-semibold"}>
                       {selectedOrder.shippingCost === 0 ? "FREE" : formatPrice(selectedOrder.shippingCost)}
                     </span>
@@ -442,12 +442,12 @@ export default function AdminOrders() {
 
                 {/* Order Status */}
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-2">Update Order Status</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Update Order Status</p>
                   <select
                     value={selectedOrder.status}
                     onChange={e => handleStatusChange(selectedOrder.id, e.target.value as UpdateOrderStatusRequestStatus)}
                     className="w-full px-4 py-3 rounded-xl text-sm font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                    style={{ background: 'hsl(0 0% 10%)', border: '1px solid rgba(255,255,255,0.08)', color: 'hsl(var(--foreground))' }}
+                    style={{ background: 'white', border: '1px solid #e5e7eb', color: '#111827' }}
                   >
                     <option value="pending">⏳ Pending</option>
                     <option value="processing">🔄 Processing</option>

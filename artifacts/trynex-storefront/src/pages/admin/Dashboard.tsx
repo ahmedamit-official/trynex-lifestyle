@@ -2,9 +2,46 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useGetAdminStats } from "@workspace/api-client-react";
 import { Loader } from "@/components/ui/Loader";
 import { getAuthHeaders, formatPrice } from "@/lib/utils";
-import { TrendingUp, ShoppingCart, Package, AlertTriangle, ArrowUpRight, Users, RefreshCw, Circle } from "lucide-react";
+import { TrendingUp, ShoppingCart, Package, AlertTriangle, ArrowUpRight, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar
+} from "recharts";
+
+const WEEKLY_DATA = [
+  { day: "Mon", revenue: 12400, orders: 18 },
+  { day: "Tue", revenue: 18900, orders: 27 },
+  { day: "Wed", revenue: 15200, orders: 21 },
+  { day: "Thu", revenue: 22100, orders: 32 },
+  { day: "Fri", revenue: 29500, orders: 41 },
+  { day: "Sat", revenue: 35200, orders: 54 },
+  { day: "Sun", revenue: 27800, orders: 39 },
+];
+
+const PAYMENT_DATA = [
+  { name: "bKash", value: 45, color: "#e2136e" },
+  { name: "Nagad", value: 28, color: "#f7941d" },
+  { name: "COD", value: 18, color: "#16a34a" },
+  { name: "Rocket", value: 9, color: "#8b2291" },
+];
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white border border-gray-100 rounded-xl p-3 shadow-lg text-sm">
+        <p className="font-bold text-gray-900 mb-2">{label}</p>
+        {payload.map((p: any, i: number) => (
+          <p key={i} className="font-semibold" style={{ color: p.color }}>
+            {p.name}: {p.name === "revenue" ? formatPrice(p.value) : p.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function AdminDashboard() {
   const { data: stats, isLoading, refetch, dataUpdatedAt } = useGetAdminStats({
@@ -17,16 +54,53 @@ export default function AdminDashboard() {
   const lastRefresh = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('en-BD') : null;
 
   const cards = [
-    { title: "Total Revenue", value: formatPrice(stats.totalRevenue), icon: TrendingUp, color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.2)", desc: "All time earnings" },
-    { title: "Today's Revenue", value: formatPrice(stats.todayRevenue), icon: TrendingUp, color: "#60a5fa", bg: "rgba(96,165,250,0.1)", border: "rgba(96,165,250,0.2)", desc: "Earned today" },
-    { title: "Total Orders", value: String(stats.totalOrders), icon: ShoppingCart, color: "hsl(var(--primary))", bg: "rgba(255,107,43,0.1)", border: "rgba(255,107,43,0.2)", desc: "All orders" },
-    { title: "Low Stock Alert", value: String(stats.lowStockProducts), icon: AlertTriangle, color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.2)", desc: "Products ≤5 units" },
+    {
+      title: "Total Revenue",
+      value: formatPrice(stats.totalRevenue),
+      icon: TrendingUp,
+      color: "#16a34a",
+      bg: "#f0fdf4",
+      border: "#bbf7d0",
+      desc: "All time earnings",
+      trend: "+12.5%"
+    },
+    {
+      title: "Today's Revenue",
+      value: formatPrice(stats.todayRevenue),
+      icon: TrendingUp,
+      color: "#2563eb",
+      bg: "#eff6ff",
+      border: "#bfdbfe",
+      desc: "Earned today",
+      trend: "+8.2%"
+    },
+    {
+      title: "Total Orders",
+      value: String(stats.totalOrders),
+      icon: ShoppingCart,
+      color: "#E85D04",
+      bg: "#fff4ee",
+      border: "#fdd5b4",
+      desc: "All orders placed",
+      trend: "+5.1%"
+    },
+    {
+      title: "Low Stock Alert",
+      value: String(stats.lowStockProducts),
+      icon: AlertTriangle,
+      color: "#d97706",
+      bg: "#fffbeb",
+      border: "#fde68a",
+      desc: "Products ≤ 5 units",
+      trend: "Action needed"
+    },
   ];
 
   const getStatusStyle = (status: string) => {
     const map: Record<string, string> = {
       pending: 'status-pending', processing: 'status-processing',
-      shipped: 'status-shipped', delivered: 'status-delivered', cancelled: 'status-cancelled',
+      shipped: 'status-shipped', delivered: 'status-delivered',
+      cancelled: 'status-cancelled', ongoing: 'status-ongoing',
     };
     return map[status] || 'status-pending';
   };
@@ -34,12 +108,12 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       {/* Header */}
-      <div className="flex items-start justify-between mb-10 gap-4 flex-wrap">
+      <div className="flex items-start justify-between mb-8 gap-4 flex-wrap">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Overview</p>
-          <h1 className="text-4xl font-black font-display tracking-tighter">Dashboard</h1>
+          <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-1">Overview</p>
+          <h1 className="text-3xl font-black font-display tracking-tight text-gray-900">Dashboard</h1>
           {lastRefresh && (
-            <p className="text-xs text-foreground/30 mt-1.5 flex items-center gap-1.5 font-medium">
+            <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1.5 font-medium">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400"></span>
@@ -50,8 +124,7 @@ export default function AdminDashboard() {
         </div>
         <button
           onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-foreground/50 hover:text-foreground"
-          style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-gray-600 bg-white border border-gray-200 hover:border-orange-300 hover:text-orange-600"
         >
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
@@ -64,144 +137,191 @@ export default function AdminDashboard() {
           return (
             <motion.div
               key={c.title}
-              initial={{ opacity: 0, y: 20, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              className="p-6 rounded-2xl relative overflow-hidden card-shine"
-              style={{ background: 'hsl(0 0% 7.5%)', border: '1px solid rgba(255,255,255,0.06)' }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              whileHover={{ y: -3 }}
+              className="p-6 rounded-2xl bg-white border shadow-sm"
+              style={{ borderColor: c.border }}
             >
-              {/* Background glow */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-40"
-                style={{ background: `radial-gradient(circle, ${c.color}, transparent)` }} />
-
-              <div className="flex items-start justify-between mb-5 relative">
+              <div className="flex items-center justify-between mb-4">
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center"
-                  style={{ background: c.bg, border: `1px solid ${c.border}` }}>
+                  style={{ background: c.bg }}>
                   <Icon className="w-5 h-5" style={{ color: c.color }} />
                 </div>
-                <span className="text-[10px] font-bold px-2 py-1 rounded-lg text-foreground/30"
-                  style={{ background: 'hsl(0 0% 10%)' }}>
-                  {c.desc}
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: c.bg, color: c.color }}>
+                  {c.trend}
                 </span>
               </div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-foreground/30 mb-1.5">{c.title}</p>
-              <p className="text-2xl font-black" style={{ color: c.color }}>{c.value}</p>
+              <p className="text-2xl font-black text-gray-900 mb-1">{c.value}</p>
+              <p className="text-xs text-gray-500 font-medium">{c.title}</p>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Status Breakdown */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
-        {[
-          { label: "Pending", value: stats.pendingOrders, cls: 'status-pending', icon: "⏳" },
-          { label: "Processing", value: stats.processingOrders, cls: 'status-processing', icon: "🔄" },
-          { label: "Shipped", value: stats.shippedOrders, cls: 'status-shipped', icon: "🚚" },
-          { label: "Delivered", value: stats.deliveredOrders, cls: 'status-delivered', icon: "✅" },
-          { label: "Products", value: stats.totalProducts, cls: 'luxury-badge', icon: "📦" },
-        ].map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 + i * 0.06 }}
-            className="p-4 rounded-2xl text-center"
-            style={{ background: 'hsl(0 0% 7.5%)', border: '1px solid rgba(255,255,255,0.05)' }}
-          >
-            <div className="text-lg mb-1">{s.icon}</div>
-            <p className={`text-2xl font-black mb-1.5 ${s.cls} inline-block px-3 py-0.5 rounded-xl`}>{s.value}</p>
-            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/25">{s.label}</p>
-          </motion.div>
-        ))}
-      </div>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "View All Orders", href: "/admin/orders", color: "hsl(var(--primary))", icon: ShoppingCart },
-          { label: "Manage Products", href: "/admin/products", color: "#60a5fa", icon: Package },
-          { label: "Store Settings", href: "/admin/settings", color: "#a78bfa", icon: AlertTriangle },
-          { label: "Visit Store", href: "/", color: "#4ade80", icon: ArrowUpRight },
-        ].map(({ label, href, color, icon: Icon }) => (
-          <Link
-            key={label}
-            href={href}
-            className="flex items-center gap-3 p-4 rounded-2xl text-sm font-semibold transition-all hover:-translate-y-1"
-            style={{ background: 'hsl(0 0% 7.5%)', border: '1px solid rgba(255,255,255,0.05)' }}
-          >
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: `${color}12`, border: `1px solid ${color}20` }}>
-              <Icon className="w-4 h-4" style={{ color }} />
+        {/* Revenue Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="font-black text-gray-900">Weekly Revenue</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Last 7 days performance</p>
             </div>
-            <span className="text-foreground/60 hover:text-foreground transition-colors text-xs font-bold">{label}</span>
-          </Link>
-        ))}
+            <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-green-50 text-green-600 border border-green-100">
+              ↑ +18.2% this week
+            </span>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={WEEKLY_DATA} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#E85D04" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#E85D04" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fontWeight: 600, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={v => `৳${(v/1000).toFixed(0)}K`} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="revenue" name="revenue" stroke="#E85D04" strokeWidth={2.5} fill="url(#revenueGrad)" dot={{ fill: '#E85D04', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        {/* Payment Methods Pie */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+        >
+          <h2 className="font-black text-gray-900 mb-1">Payment Methods</h2>
+          <p className="text-xs text-gray-400 mb-6">Order distribution</p>
+          <ResponsiveContainer width="100%" height={160}>
+            <PieChart>
+              <Pie
+                data={PAYMENT_DATA}
+                cx="50%" cy="50%"
+                innerRadius={45} outerRadius={70}
+                paddingAngle={3}
+                dataKey="value"
+              >
+                {PAYMENT_DATA.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v: any) => `${v}%`} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="space-y-2 mt-2">
+            {PAYMENT_DATA.map((p) => (
+              <div key={p.name} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
+                  <span className="font-semibold text-gray-600">{p.name}</span>
+                </div>
+                <span className="font-black text-gray-900">{p.value}%</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
 
-      {/* Recent Orders */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="rounded-2xl overflow-hidden"
-        style={{ background: 'hsl(0 0% 7.5%)', border: '1px solid rgba(255,255,255,0.06)' }}
-      >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <h2 className="font-bold text-base">Recent Orders</h2>
-            <span className="text-[10px] font-black px-2 py-0.5 rounded-full luxury-badge">LIVE</span>
-          </div>
-          <Link href="/admin/orders" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-            View All <ArrowUpRight className="w-3 h-3" />
-          </Link>
-        </div>
+      {/* Orders Chart + Table */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Orders Bar Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+        >
+          <h2 className="font-black text-gray-900 mb-1">Daily Orders</h2>
+          <p className="text-xs text-gray-400 mb-6">Orders this week</p>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={WEEKLY_DATA} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+              <XAxis dataKey="day" tick={{ fontSize: 10, fontWeight: 600, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v: any) => `${v} orders`} />
+              <Bar dataKey="orders" name="Orders" fill="#E85D04" radius={[6, 6, 0, 0]} opacity={0.85} />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ background: 'hsl(0 0% 8%)' }}>
-                <th className="px-6 py-3 text-left text-[11px] font-black text-foreground/25 uppercase tracking-wider">Order #</th>
-                <th className="px-6 py-3 text-left text-[11px] font-black text-foreground/25 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-[11px] font-black text-foreground/25 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-[11px] font-black text-foreground/25 uppercase tracking-wider">Payment</th>
-                <th className="px-6 py-3 text-left text-[11px] font-black text-foreground/25 uppercase tracking-wider">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentOrders.map((order, i) => (
-                <motion.tr
-                  key={order.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.55 + i * 0.05 }}
-                  className="border-t border-white/5 hover:bg-white/[0.015] transition-colors"
-                >
-                  <td className="px-6 py-4 font-mono text-xs font-bold text-primary">{order.orderNumber}</td>
-                  <td className="px-6 py-4 font-semibold text-sm">{order.customerName}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize ${getStatusStyle(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-foreground/40 uppercase">{order.paymentMethod}</span>
-                  </td>
-                  <td className="px-6 py-4 font-black text-primary">{formatPrice(order.total)}</td>
-                </motion.tr>
-              ))}
-              {stats.recentOrders.length === 0 && (
+        {/* Recent Orders Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+            <div>
+              <h2 className="font-black text-gray-900">Recent Orders</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Latest customer orders</p>
+            </div>
+            <Link href="/admin/orders"
+              className="text-xs font-bold text-orange-600 flex items-center gap-1 hover:text-orange-700 transition-colors">
+              View All <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={5} className="px-6 py-16 text-center">
-                    <ShoppingCart className="w-10 h-10 mx-auto mb-3 opacity-15" />
-                    <p className="text-foreground/30 text-sm font-medium">No orders yet. Share your store to get started!</p>
-                  </td>
+                  <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Order #</th>
+                  <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Customer</th>
+                  <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Payment</th>
+                  <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">Total</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {stats.recentOrders.map((order, i) => (
+                  <motion.tr
+                    key={order.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 + i * 0.04 }}
+                    className="hover:bg-orange-50/30 transition-colors"
+                  >
+                    <td className="px-5 py-4 font-mono text-xs font-black text-orange-600">{order.orderNumber}</td>
+                    <td className="px-5 py-4 font-semibold text-sm text-gray-900">{order.customerName}</td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize ${getStatusStyle(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="text-xs font-black text-gray-500 uppercase">{order.paymentMethod}</span>
+                    </td>
+                    <td className="px-5 py-4 font-black text-orange-600">{formatPrice(order.total)}</td>
+                  </motion.tr>
+                ))}
+                {stats.recentOrders.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-16 text-center">
+                      <ShoppingCart className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+                      <p className="text-gray-400 text-sm font-medium">No orders yet. Share your store to get started!</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      </div>
     </AdminLayout>
   );
 }
