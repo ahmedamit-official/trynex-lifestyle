@@ -6,6 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { TrackingPixels } from "@/components/TrackingPixels";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -68,6 +69,7 @@ function App() {
         <CartProvider>
           <WishlistProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <TrackingPixels />
               <AnnouncementBar />
               <Router />
               <WhatsAppButton />

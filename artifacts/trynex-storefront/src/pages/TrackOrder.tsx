@@ -9,32 +9,32 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice, cn, getApiUrl } from "@/lib/utils";
 
-const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-foreground/25";
-const inputStyle = { background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' };
+const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
+const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
-const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: string; border: string; icon: any; desc: string }> = {
+const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: string; border: string; icon: typeof XCircle; desc: string }> = {
   pending: {
-    label: 'Not Paid', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)',
+    label: 'Not Paid', color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)',
     icon: XCircle, desc: 'Payment not yet received'
   },
   not_paid: {
-    label: 'Not Paid', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)',
+    label: 'Not Paid', color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)',
     icon: XCircle, desc: 'Payment not yet received'
   },
   submitted: {
-    label: 'Under Review', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)',
+    label: 'Under Review', color: '#f59e0b', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.15)',
     icon: RefreshCw, desc: 'Your payment is being verified by admin'
   },
   verified: {
-    label: 'Payment Confirmed', color: '#22c55e', bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.2)',
+    label: 'Payment Confirmed', color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)',
     icon: CheckCircle2, desc: 'Payment received and confirmed!'
   },
   wrong: {
-    label: 'Payment Issue', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)',
+    label: 'Payment Issue', color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)',
     icon: AlertTriangle, desc: 'Issue with payment — contact us on WhatsApp'
   },
   cod: {
-    label: 'Cash on Delivery', color: '#4ade80', bg: 'rgba(74,222,128,0.08)', border: 'rgba(74,222,128,0.2)',
+    label: 'Cash on Delivery', color: '#16a34a', bg: 'rgba(22,163,74,0.06)', border: 'rgba(22,163,74,0.15)',
     icon: CheckCircle2, desc: 'Pay when you receive your order'
   },
 };
@@ -49,12 +49,7 @@ const ORDER_STEPS = [
 
 function getOrderStepIndex(status: string): number {
   const map: Record<string, number> = {
-    pending: 0,
-    processing: 1,
-    shipped: 2,
-    ongoing: 3,
-    delivered: 4,
-    cancelled: -1,
+    pending: 0, processing: 1, shipped: 2, ongoing: 3, delivered: 4, cancelled: -1,
   };
   return map[status] ?? 0;
 }
@@ -63,7 +58,7 @@ export default function TrackOrder() {
   const [orderNumber, setOrderNumber] = useState("");
   const [email, setEmail] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [liveOrderData, setLiveOrderData] = useState<any>(null);
+  const [liveOrderData, setLiveOrderData] = useState<Record<string, unknown> | null>(null);
   const [isPolling, setIsPolling] = useState(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -71,7 +66,7 @@ export default function TrackOrder() {
 
   useEffect(() => {
     if (order) {
-      setLiveOrderData(order);
+      setLiveOrderData(order as Record<string, unknown>);
     }
   }, [order]);
 
@@ -83,13 +78,13 @@ export default function TrackOrder() {
           const res = await fetch(getApiUrl('/api/orders/track'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderNumber: liveOrderData.orderNumber, email: email || liveOrderData.customerEmail })
+            body: JSON.stringify({ orderNumber: liveOrderData.orderNumber, email: email || (liveOrderData as Record<string, unknown>).customerEmail })
           });
           if (res.ok) {
             const data = await res.json();
             setLiveOrderData(data);
           }
-        } catch {}
+        } catch { /* polling error ignored */ }
       };
       pollingRef.current = setInterval(poll, 30000);
       return () => {
@@ -107,9 +102,9 @@ export default function TrackOrder() {
     await track({ data: { orderNumber, email: email || 'noemail@trynex.com' } }).catch(() => {});
   };
 
-  const displayOrder = liveOrderData;
-  const stepIdx = displayOrder ? getOrderStepIndex(displayOrder.status) : -1;
-  const paymentInfo = displayOrder ? PAYMENT_STATUSES[displayOrder.paymentStatus] || PAYMENT_STATUSES.pending : null;
+  const displayOrder = liveOrderData as Record<string, unknown> | null;
+  const stepIdx = displayOrder ? getOrderStepIndex(displayOrder.status as string) : -1;
+  const paymentInfo = displayOrder ? PAYMENT_STATUSES[(displayOrder.paymentStatus as string)] || PAYMENT_STATUSES.pending : null;
   const PayIcon = paymentInfo?.icon;
 
   const TRYNEX_NUMBER = "+8801747292277";
@@ -119,43 +114,37 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
       <main className="flex-1 pt-28 pb-24 flex flex-col items-center">
         <div className="max-w-2xl w-full px-4 sm:px-6">
 
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
             <div className="inline-flex w-20 h-20 rounded-3xl items-center justify-center mb-6"
-              style={{
-                background: 'rgba(255,107,43,0.1)',
-                border: '1px solid rgba(255,107,43,0.2)',
-                boxShadow: '0 0 40px rgba(255,107,43,0.1)'
-              }}>
-              <MapPin className="w-9 h-9 text-primary" />
+              style={{ background: 'rgba(232,93,4,0.08)', border: '1px solid rgba(232,93,4,0.15)' }}>
+              <MapPin className="w-9 h-9 text-orange-500" />
             </div>
-            <p className="text-xs font-black uppercase tracking-widest text-primary mb-3">Live Tracking</p>
-            <h1 className="text-5xl font-black font-display tracking-tighter mb-4">Track Your Order</h1>
-            <p className="text-foreground/45 text-base">Real-time updates on your TryNex order status.</p>
+            <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-3">Live Tracking</p>
+            <h1 className="text-5xl font-black font-display tracking-tighter mb-4 text-gray-900">Track Your Order</h1>
+            <p className="text-gray-400 text-base">Real-time updates on your TryNex order status.</p>
           </motion.div>
 
-          {/* Search Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="p-7 rounded-3xl mb-8"
-            style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.07)' }}
+            style={{ background: '#FAFAFA', border: '1px solid #e5e7eb' }}
           >
             <form onSubmit={handleTrack} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-black uppercase tracking-wider text-foreground/40 mb-2">
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
                     Order Number *
                   </label>
                   <input
@@ -168,7 +157,7 @@ export default function TrackOrder() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-black uppercase tracking-wider text-foreground/40 mb-2">
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
                     Email Address (used at checkout)
                   </label>
                   <input
@@ -185,14 +174,13 @@ export default function TrackOrder() {
                 type="submit"
                 disabled={isPending || !orderNumber}
                 className="btn-glow w-full py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2.5 text-base disabled:opacity-50"
-                style={{ background: 'hsl(var(--primary))' }}
+                style={{ background: 'linear-gradient(135deg, #E85D04, #FB8500)', boxShadow: '0 6px 24px rgba(232,93,4,0.35)' }}
               >
                 {isPending ? <><Loader2 className="w-5 h-5 animate-spin" /> Searching...</> : <><Search className="w-5 h-5" /> Track Order</>}
               </button>
             </form>
           </motion.div>
 
-          {/* Error */}
           <AnimatePresence>
             {hasSearched && !isPending && error && !displayOrder && (
               <motion.div
@@ -200,16 +188,15 @@ export default function TrackOrder() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="text-center p-6 rounded-2xl text-sm font-semibold mb-6"
-                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}
+                style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', color: '#ef4444' }}
               >
                 <XCircle className="w-6 h-6 mx-auto mb-2 opacity-70" />
                 Order not found. Please check your Order Number and Email, then try again.
-                <p className="text-xs text-foreground/30 mt-2">Need help? WhatsApp: {TRYNEX_NUMBER}</p>
+                <p className="text-xs text-gray-400 mt-2">Need help? WhatsApp: {TRYNEX_NUMBER}</p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Order Result */}
           <AnimatePresence>
             {displayOrder && (
               <motion.div
@@ -217,38 +204,34 @@ export default function TrackOrder() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                {/* Main Card */}
-                <div className="rounded-3xl overflow-hidden"
-                  style={{ background: 'hsl(0 0% 7%)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="rounded-3xl overflow-hidden bg-white border border-gray-200"
+                  style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
 
-                  {/* Status Header */}
-                  <div className="p-6 sm:p-8"
-                    style={{ background: 'linear-gradient(135deg, hsl(0 0% 8%) 0%, hsl(0 0% 6%) 100%)' }}>
+                  <div className="p-6 sm:p-8 bg-gray-50/80">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-1">Order Reference</p>
-                        <p className="text-2xl font-black font-mono text-primary">{displayOrder.orderNumber}</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Order Reference</p>
+                        <p className="text-2xl font-black font-mono text-orange-600">{displayOrder.orderNumber as string}</p>
                       </div>
                       {isPolling && (
-                        <div className="flex items-center gap-1.5 text-xs text-foreground/30">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
                           <RefreshCw className="w-3 h-3 animate-spin" />
                           <span>Live</span>
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-foreground/30 mb-8">
-                      Placed on {displayOrder.createdAt ? new Date(displayOrder.createdAt).toLocaleString('en-BD', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A'}
+                    <p className="text-xs text-gray-400 mb-8">
+                      Placed on {displayOrder.createdAt ? new Date(displayOrder.createdAt as string).toLocaleString('en-BD', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A'}
                     </p>
 
-                    {/* Order Progress Steps */}
-                    {displayOrder.status !== 'cancelled' ? (
+                    {(displayOrder.status as string) !== 'cancelled' ? (
                       <div className="relative">
-                        <div className="absolute top-5 left-5 right-5 h-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                        <div className="absolute top-5 left-5 right-5 h-0.5 rounded-full bg-gray-200" />
                         {stepIdx > 0 && (
                           <div
                             className="absolute top-5 left-5 h-0.5 rounded-full transition-all duration-1000"
                             style={{
-                              background: 'linear-gradient(90deg, hsl(var(--primary)), rgba(255,107,43,0.5))',
+                              background: 'linear-gradient(90deg, #E85D04, #FB8500)',
                               width: `${(stepIdx / (ORDER_STEPS.length - 1)) * (100 - 12)}%`,
                               maxWidth: 'calc(100% - 40px)'
                             }}
@@ -266,15 +249,15 @@ export default function TrackOrder() {
                                   transition={{ repeat: Infinity, duration: 2 }}
                                   className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500"
                                   style={{
-                                    background: isActive ? 'hsl(var(--primary))' : 'hsl(0 0% 10%)',
-                                    borderColor: isActive ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.08)',
-                                    color: isActive ? 'white' : 'rgba(255,255,255,0.3)',
-                                    boxShadow: isCurrent ? '0 0 20px rgba(255,107,43,0.5)' : undefined
+                                    background: isActive ? '#E85D04' : 'white',
+                                    borderColor: isActive ? '#E85D04' : '#e5e7eb',
+                                    color: isActive ? 'white' : '#9ca3af',
+                                    boxShadow: isCurrent ? '0 0 20px rgba(232,93,4,0.4)' : undefined
                                   }}
                                 >
                                   <Icon className="w-4 h-4" />
                                 </motion.div>
-                                <span className={cn("text-[10px] font-black text-center hidden sm:block", isActive ? "text-foreground" : "text-foreground/25")}>
+                                <span className={cn("text-[10px] font-black text-center hidden sm:block", isActive ? "text-gray-900" : "text-gray-300")}>
                                   {step.label}
                                 </span>
                               </div>
@@ -284,110 +267,105 @@ export default function TrackOrder() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-3 p-4 rounded-2xl"
-                        style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                        <XCircle className="w-6 h-6 text-red-400" />
+                        style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+                        <XCircle className="w-6 h-6 text-red-500" />
                         <div>
-                          <p className="font-black text-red-400">Order Cancelled</p>
-                          <p className="text-xs text-foreground/40">Contact us if you need assistance</p>
+                          <p className="font-black text-red-500">Order Cancelled</p>
+                          <p className="text-xs text-gray-400">Contact us if you need assistance</p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  {/* Payment Status */}
-                  {paymentInfo && displayOrder.paymentMethod !== 'cod' && (
-                    <div className="px-6 sm:px-8 py-5 border-t border-white/5">
-                      <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-3">Payment Status</p>
+                  {paymentInfo && (displayOrder.paymentMethod as string) !== 'cod' && (
+                    <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+                      <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Payment Status</p>
                       <div className="flex items-center gap-4 p-4 rounded-2xl"
                         style={{ background: paymentInfo.bg, border: `1px solid ${paymentInfo.border}` }}>
                         {PayIcon && <PayIcon className="w-6 h-6 shrink-0" style={{ color: paymentInfo.color }} />}
                         <div className="flex-1">
                           <p className="font-black text-sm" style={{ color: paymentInfo.color }}>{paymentInfo.label}</p>
-                          <p className="text-xs text-foreground/40 mt-0.5">{paymentInfo.desc}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{paymentInfo.desc}</p>
                         </div>
-                        {displayOrder.paymentStatus === 'verified' && (
+                        {(displayOrder.paymentStatus as string) === 'verified' && (
                           <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
                         )}
                       </div>
-                      {displayOrder.paymentStatus === 'submitted' && (
-                        <p className="text-xs text-foreground/30 mt-2 flex items-center gap-1.5">
+                      {(displayOrder.paymentStatus as string) === 'submitted' && (
+                        <p className="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
                           <Clock className="w-3 h-3" /> Verification takes 5–30 minutes. This page refreshes automatically.
                         </p>
                       )}
                     </div>
                   )}
 
-                  {/* Customer Info */}
-                  <div className="px-6 sm:px-8 py-5 border-t border-white/5">
-                    <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-3">Delivery Details</p>
+                  <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Delivery Details</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 rounded-xl" style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Customer</p>
-                        <p className="font-bold text-sm">{displayOrder.customerName}</p>
+                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Customer</p>
+                        <p className="font-bold text-sm text-gray-900">{displayOrder.customerName as string}</p>
                       </div>
-                      <div className="p-3 rounded-xl" style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Payment</p>
-                        <p className="font-bold text-sm">{paymentMethodLabel[displayOrder.paymentMethod] || displayOrder.paymentMethod}</p>
+                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Payment</p>
+                        <p className="font-bold text-sm text-gray-900">{paymentMethodLabel[(displayOrder.paymentMethod as string)] || (displayOrder.paymentMethod as string)}</p>
                       </div>
                       {displayOrder.shippingDistrict && (
-                        <div className="col-span-2 p-3 rounded-xl" style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Shipping District</p>
-                          <p className="font-bold text-sm">{displayOrder.shippingDistrict}</p>
+                        <div className="col-span-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping District</p>
+                          <p className="font-bold text-sm text-gray-900">{displayOrder.shippingDistrict as string}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Order Items */}
-                  <div className="px-6 sm:px-8 py-5 border-t border-white/5">
-                    <p className="text-xs font-black uppercase tracking-widest text-foreground/30 mb-4">Items Ordered</p>
+                  <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Items Ordered</p>
                     <div className="space-y-3">
-                      {displayOrder.items.map((item: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0">
-                          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0"
-                            style={{ background: 'hsl(0 0% 10%)' }}>
+                      {(displayOrder.items as Array<Record<string, unknown>>).map((item, idx: number) => (
+                        <div key={idx} className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
+                          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100">
                             {item.productImage && (
-                              <img src={item.productImage} alt="" className="w-full h-full object-cover" />
+                              <img src={item.productImage as string} alt="" className="w-full h-full object-cover" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm leading-snug">{item.productName}</p>
-                            <p className="text-xs text-foreground/35 mt-0.5">
-                              Qty: {item.quantity}
+                            <p className="font-bold text-sm leading-snug text-gray-900">{item.productName as string}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              Qty: {item.quantity as number}
                               {item.size ? ` · Size: ${item.size}` : ''}
                               {item.color ? ` · Color: ${item.color}` : ''}
                             </p>
                           </div>
-                          <span className="font-bold text-primary text-sm shrink-0">{formatPrice(item.price * item.quantity)}</span>
+                          <span className="font-bold text-orange-600 text-sm shrink-0">{formatPrice((item.price as number) * (item.quantity as number))}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-white/5 space-y-2">
-                      <div className="flex justify-between text-sm text-foreground/40">
-                        <span>Subtotal</span><span>{formatPrice(displayOrder.subtotal)}</span>
+                    <div className="mt-5 pt-4 border-t border-gray-200 space-y-2">
+                      <div className="flex justify-between text-sm text-gray-400">
+                        <span>Subtotal</span><span className="text-gray-900">{formatPrice(displayOrder.subtotal as number)}</span>
                       </div>
-                      <div className="flex justify-between text-sm text-foreground/40">
+                      <div className="flex justify-between text-sm text-gray-400">
                         <span>Shipping</span>
-                        <span>{displayOrder.shippingCost === 0 ? "FREE" : formatPrice(displayOrder.shippingCost)}</span>
+                        <span className="text-gray-900">{(displayOrder.shippingCost as number) === 0 ? "FREE" : formatPrice(displayOrder.shippingCost as number)}</span>
                       </div>
-                      <div className="flex justify-between font-black text-lg pt-2 border-t border-white/5">
-                        <span>Total</span><span className="text-primary">{formatPrice(displayOrder.total)}</span>
+                      <div className="flex justify-between font-black text-lg pt-2 border-t border-gray-200">
+                        <span className="text-gray-900">Total</span><span className="text-orange-600">{formatPrice(displayOrder.total as number)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Help Box */}
                 <div className="p-5 rounded-2xl text-center"
-                  style={{ background: 'rgba(255,107,43,0.05)', border: '1px solid rgba(255,107,43,0.1)' }}>
-                  <p className="text-sm text-foreground/50">
+                  style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.1)' }}>
+                  <p className="text-sm text-gray-500">
                     Questions? WhatsApp us at{' '}
                     <a
                       href={`https://wa.me/${TRYNEX_NUMBER.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-black text-primary hover:underline"
+                      className="font-black text-orange-600 hover:underline"
                     >
                       {TRYNEX_NUMBER}
                     </a>

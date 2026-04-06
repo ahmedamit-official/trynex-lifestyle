@@ -71,14 +71,22 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - JSON-LD structured data (Organization, WebSite, OnlineStore schemas)
 - `public/robots.txt` and `public/sitemap.xml`
 
+### Analytics & Tracking
+- **Google Analytics (GA4)**: Admin-configurable Measurement ID (G-XXXXXXXXXX)
+- **Facebook Pixel**: Admin-configurable Pixel ID for Meta Ads
+- **Google Ads**: Admin-configurable Conversion ID (AW-XXXXXXXXX)
+- **Conversion events**: PageView (route change), ViewContent (product detail), AddToCart, InitiateCheckout, Purchase
+- **Implementation**: `src/lib/tracking.ts` + `TrackingPixels.tsx` component — scripts loaded dynamically, no hardcoded IDs
+- **Admin config**: Settings → Analytics & Tracking section
+
 ### Admin Panel
 - **URL**: `/admin` (hidden; tap footer logo 5 times)
-- **Credentials**: admin / admin123 (change via Settings)
+- **Credentials**: admin / Admins@Trynex
 - **Dashboard** — Recharts charts: AreaChart (weekly revenue), PieChart (payment methods), BarChart (daily orders); live stats with 30s auto-refresh
 - **Products** — CRUD management with image upload
 - **Orders** — Full order management with status updates
 - **Blog** — Post editor with markdown
-- **Settings** — Site config, WhatsApp number, social links, payment settings
+- **Settings** — Site config, WhatsApp number, social links, payment settings, analytics tracking IDs
 
 ## Database Schema
 

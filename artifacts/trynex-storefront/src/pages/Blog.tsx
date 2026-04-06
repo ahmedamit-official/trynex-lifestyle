@@ -50,47 +50,44 @@ export default function Blog() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
       <main className="flex-1 pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-16 mb-12"
           >
             <div className="inline-flex w-16 h-16 rounded-2xl items-center justify-center mb-6"
-              style={{ background: 'rgba(255,107,43,0.1)', border: '1px solid rgba(255,107,43,0.15)' }}>
-              <BookOpen className="w-7 h-7 text-primary" />
+              style={{ background: 'rgba(232,93,4,0.08)', border: '1px solid rgba(232,93,4,0.15)' }}>
+              <BookOpen className="w-7 h-7 text-orange-500" />
             </div>
-            <p className="text-xs font-black uppercase tracking-widest text-primary mb-3">Stories & Updates</p>
-            <h1 className="text-6xl font-black font-display tracking-tighter mb-4">TryNex Blog</h1>
-            <p className="text-foreground/45 text-lg max-w-md mx-auto">
+            <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-3">Stories & Updates</p>
+            <h1 className="text-6xl font-black font-display tracking-tighter mb-4 text-gray-900">TryNex Blog</h1>
+            <p className="text-gray-400 text-lg max-w-md mx-auto">
               Style tips, brand updates, and inspiration for your lifestyle.
             </p>
           </motion.div>
 
-          {/* Search + Tags */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search posts..."
-                className="w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary"
-                style={{ background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)', color: 'hsl(var(--foreground))' }}
+                className="w-full pl-11 pr-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 bg-white text-gray-900 placeholder:text-gray-400"
+                style={{ border: '1px solid #e5e7eb' }}
               />
             </div>
             {allTags.length > 0 && (
               <div className="flex gap-2 flex-wrap items-center">
                 <button
                   onClick={() => setActiveTag("")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!activeTag ? 'text-white' : 'text-foreground/40 hover:text-foreground'}`}
-                  style={!activeTag ? { background: 'hsl(var(--primary))' } : { background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!activeTag ? 'text-white bg-orange-500' : 'text-gray-500 hover:text-gray-700 bg-gray-100'}`}
                 >
                   All
                 </button>
@@ -98,8 +95,7 @@ export default function Blog() {
                   <button
                     key={tag}
                     onClick={() => setActiveTag(tag === activeTag ? "" : tag)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTag === tag ? 'text-white' : 'text-foreground/40 hover:text-foreground'}`}
-                    style={activeTag === tag ? { background: 'hsl(var(--primary))' } : { background: 'hsl(0 0% 9%)', border: '1px solid rgba(255,255,255,0.07)' }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTag === tag ? 'text-white bg-orange-500' : 'text-gray-500 hover:text-gray-700 bg-gray-100'}`}
                   >
                     <Tag className="inline w-3 h-3 mr-1" />{tag}
                   </button>
@@ -108,28 +104,26 @@ export default function Blog() {
             )}
           </div>
 
-          {/* Posts Grid */}
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1,2,3,4,5,6].map(i => (
-                <div key={i} className="rounded-3xl overflow-hidden animate-pulse"
-                  style={{ background: 'hsl(0 0% 8%)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="aspect-video" style={{ background: 'hsl(0 0% 10%)' }} />
+                <div key={i} className="rounded-3xl overflow-hidden animate-pulse bg-gray-50 border border-gray-100">
+                  <div className="aspect-video bg-gray-100" />
                   <div className="p-6 space-y-3">
-                    <div className="h-4 rounded" style={{ background: 'hsl(0 0% 12%)', width: '60%' }} />
-                    <div className="h-6 rounded" style={{ background: 'hsl(0 0% 12%)' }} />
-                    <div className="h-4 rounded" style={{ background: 'hsl(0 0% 12%)', width: '80%' }} />
+                    <div className="h-4 rounded bg-gray-200" style={{ width: '60%' }} />
+                    <div className="h-6 rounded bg-gray-200" />
+                    <div className="h-4 rounded bg-gray-200" style={{ width: '80%' }} />
                   </div>
                 </div>
               ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20">
-              <BookOpen className="w-14 h-14 text-foreground/15 mx-auto mb-4" />
-              <p className="text-foreground/40 text-xl font-black mb-2">
+              <BookOpen className="w-14 h-14 text-gray-200 mx-auto mb-4" />
+              <p className="text-gray-500 text-xl font-black mb-2">
                 {posts.length === 0 ? "No Posts Yet" : "No matching posts"}
               </p>
-              <p className="text-foreground/25 text-sm">
+              <p className="text-gray-400 text-sm">
                 {posts.length === 0 ? "Check back soon for style tips and brand updates." : "Try a different search or tag."}
               </p>
             </div>
@@ -144,12 +138,8 @@ export default function Blog() {
                   transition={{ delay: idx * 0.08 }}
                 >
                   <Link href={`/blog/${post.slug}`} className="block group">
-                    <div className="rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2"
-                      style={{
-                        background: 'hsl(0 0% 7%)',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                        boxShadow: '0 8px 40px rgba(0,0,0,0.3)',
-                      }}>
+                    <div className="rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 bg-white border border-gray-100"
+                      style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
                       {post.imageUrl ? (
                         <div className="aspect-video overflow-hidden">
                           <img
@@ -159,34 +149,32 @@ export default function Blog() {
                           />
                         </div>
                       ) : (
-                        <div className="aspect-video flex items-center justify-center"
-                          style={{ background: 'linear-gradient(135deg, hsl(0 0% 9%) 0%, hsl(0 0% 11%) 100%)' }}>
-                          <BookOpen className="w-10 h-10 text-foreground/10" />
+                        <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/50">
+                          <BookOpen className="w-10 h-10 text-orange-200" />
                         </div>
                       )}
                       <div className="p-6">
                         {post.tags?.length > 0 && (
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {post.tags.slice(0, 3).map(tag => (
-                              <span key={tag} className="px-2 py-1 rounded-lg text-[10px] font-black text-foreground/40"
-                                style={{ background: 'rgba(255,255,255,0.05)' }}>
+                              <span key={tag} className="px-2 py-1 rounded-lg text-[10px] font-black text-gray-500 bg-gray-100">
                                 {tag}
                               </span>
                             ))}
                           </div>
                         )}
-                        <h3 className="font-black text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                        <h3 className="font-black text-lg leading-tight mb-2 group-hover:text-orange-600 transition-colors line-clamp-2 text-gray-900">
                           {post.title}
                         </h3>
                         {post.excerpt && (
-                          <p className="text-sm text-foreground/40 line-clamp-2 mb-4">{post.excerpt}</p>
+                          <p className="text-sm text-gray-400 line-clamp-2 mb-4">{post.excerpt}</p>
                         )}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs text-foreground/30">
+                          <div className="flex items-center gap-2 text-xs text-gray-400">
                             <Calendar className="w-3.5 h-3.5" />
                             {new Date(post.createdAt).toLocaleDateString('en-BD', { dateStyle: 'medium' })}
                           </div>
-                          <span className="flex items-center gap-1 text-xs font-bold text-primary group-hover:gap-2 transition-all">
+                          <span className="flex items-center gap-1 text-xs font-bold text-orange-500 group-hover:gap-2 transition-all">
                             Read <ArrowRight className="w-3.5 h-3.5" />
                           </span>
                         </div>

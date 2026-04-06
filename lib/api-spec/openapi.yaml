@@ -831,6 +831,12 @@ components:
           type: string
         freeShippingThreshold:
           type: number
+        googleAnalyticsId:
+          type: string
+        facebookPixelId:
+          type: string
+        googleAdsId:
+          type: string
       required:
         - siteName
 
@@ -859,6 +865,12 @@ components:
           type: string
         freeShippingThreshold:
           type: number
+        googleAnalyticsId:
+          type: string
+        facebookPixelId:
+          type: string
+        googleAdsId:
+          type: string
 
     AdminStats:
       type: object

@@ -234,6 +234,9 @@ export interface SiteSettings {
   heroSubtitle?: string;
   announcementBar?: string;
   freeShippingThreshold?: number;
+  googleAnalyticsId?: string;
+  facebookPixelId?: string;
+  googleAdsId?: string;
 }
 
 export interface UpdateSettingsRequest {
@@ -248,6 +251,9 @@ export interface UpdateSettingsRequest {
   heroSubtitle?: string;
   announcementBar?: string;
   freeShippingThreshold?: number;
+  googleAnalyticsId?: string;
+  facebookPixelId?: string;
+  googleAdsId?: string;
 }
 
 export interface AdminStats {

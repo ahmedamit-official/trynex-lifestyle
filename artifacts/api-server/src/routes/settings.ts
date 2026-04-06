@@ -11,6 +11,7 @@ const SETTINGS_KEYS = [
   "announcementBar", "freeShippingThreshold",
   "bkashNumber", "nagadNumber", "rocketNumber",
   "whatsappNumber", "shippingCost",
+  "googleAnalyticsId", "facebookPixelId", "googleAdsId",
 ];
 
 async function getAllSettings() {
@@ -37,6 +38,9 @@ async function getAllSettings() {
     rocketNumber: map["rocketNumber"] ?? "01611-234567",
     whatsappNumber: map["whatsappNumber"] ?? "01700-000000",
     shippingCost: parseFloat(map["shippingCost"] ?? "100"),
+    googleAnalyticsId: map["googleAnalyticsId"] ?? "",
+    facebookPixelId: map["facebookPixelId"] ?? "",
+    googleAdsId: map["googleAdsId"] ?? "",
   };
 }
 

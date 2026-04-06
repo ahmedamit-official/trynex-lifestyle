@@ -6,7 +6,7 @@ import { getAuthHeaders } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, Store, Phone, Globe, CreditCard, Truck, MessageCircle, Type } from "lucide-react";
+import { Save, Store, Phone, Globe, CreditCard, Truck, MessageCircle, Type, BarChart3 } from "lucide-react";
 
 const inputClass = "w-full px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
@@ -134,6 +134,22 @@ export default function AdminSettings() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black" style={{ color: '#8b2291' }}>R</span>
               <input {...register("rocketNumber")} className={inputClass} style={{ ...inputStyle, paddingLeft: '2.5rem' }} placeholder="01611-234567" />
             </div>
+          </Field>
+        </SectionCard>
+
+        {/* Analytics & Tracking */}
+        <SectionCard icon={BarChart3} title="Analytics & Tracking" iconColor="#2563eb">
+          <Field label="Google Analytics Measurement ID" full>
+            <input {...register("googleAnalyticsId")} className={inputClass} style={inputStyle} placeholder="G-XXXXXXXXXX" />
+            <p className="text-xs text-gray-400 mt-1">Enter your GA4 Measurement ID (starts with G-). Find it in Google Analytics &gt; Admin &gt; Data Streams.</p>
+          </Field>
+          <Field label="Facebook Pixel ID" full>
+            <input {...register("facebookPixelId")} className={inputClass} style={inputStyle} placeholder="123456789012345" />
+            <p className="text-xs text-gray-400 mt-1">Enter your Facebook Pixel ID (15-16 digit number). Find it in Meta Events Manager &gt; Data Sources.</p>
+          </Field>
+          <Field label="Google Ads Conversion ID" full>
+            <input {...register("googleAdsId")} className={inputClass} style={inputStyle} placeholder="AW-XXXXXXXXX" />
+            <p className="text-xs text-gray-400 mt-1">Enter your Google Ads Conversion ID (starts with AW-). Find it in Google Ads &gt; Tools &gt; Conversions.</p>
           </Field>
         </SectionCard>
 

@@ -441,6 +441,9 @@ export const GetSettingsResponse = zod.object({
   heroSubtitle: zod.string().optional(),
   announcementBar: zod.string().optional(),
   freeShippingThreshold: zod.number().optional(),
+  googleAnalyticsId: zod.string().optional(),
+  facebookPixelId: zod.string().optional(),
+  googleAdsId: zod.string().optional(),
 });
 
 /**
@@ -458,6 +461,9 @@ export const UpdateSettingsBody = zod.object({
   heroSubtitle: zod.string().optional(),
   announcementBar: zod.string().optional(),
   freeShippingThreshold: zod.number().optional(),
+  googleAnalyticsId: zod.string().optional(),
+  facebookPixelId: zod.string().optional(),
+  googleAdsId: zod.string().optional(),
 });
 
 export const UpdateSettingsResponse = zod.object({
@@ -472,6 +478,9 @@ export const UpdateSettingsResponse = zod.object({
   heroSubtitle: zod.string().optional(),
   announcementBar: zod.string().optional(),
   freeShippingThreshold: zod.number().optional(),
+  googleAnalyticsId: zod.string().optional(),
+  facebookPixelId: zod.string().optional(),
+  googleAdsId: zod.string().optional(),
 });
 
 /**

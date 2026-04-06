@@ -4,9 +4,10 @@ import { Footer } from "@/components/layout/Footer";
 import { Loader } from "@/components/ui/Loader";
 import { useGetProduct } from "@workspace/api-client-react";
 import { formatPrice, cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { trackViewContent, trackAddToCart } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import {
   Minus, Plus, ShoppingBag, ShieldCheck, Truck, Star,
@@ -60,6 +61,16 @@ export default function ProductDetail() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
 
+  useEffect(() => {
+    if (product) {
+      trackViewContent({
+        id: product.id,
+        name: product.name,
+        price: product.discountPrice || product.price,
+      });
+    }
+  }, [product?.id]);
+
   if (isLoading) return <Loader fullScreen />;
 
   const NotFound = (
@@ -83,16 +94,18 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product.stock < 1) return;
+    const itemPrice = product.discountPrice || product.price;
     addToCart({
       productId: product.id,
       name: product.name,
-      price: product.discountPrice || product.price,
+      price: itemPrice,
       quantity,
       imageUrl: product.imageUrl,
       size: selectedSize || undefined,
       color: selectedColor || undefined,
       customNote: customNote || undefined,
     });
+    trackAddToCart({ id: product.id, name: product.name, price: itemPrice, quantity });
     setAddedToBag(true);
     toast({ title: "✓ Added to cart!", description: `${product.name} × ${quantity}` });
     setTimeout(() => setAddedToBag(false), 2000);
