@@ -74,7 +74,7 @@ export default function BlogPost() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      <main className="flex-1 pt-28 pb-24">
+      <main className="flex-1 pt-header pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
           <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-orange-600 transition-colors mb-8">

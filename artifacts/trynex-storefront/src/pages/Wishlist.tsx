@@ -21,7 +21,7 @@ export default function Wishlist() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <main className="flex-1 pt-28 pb-20">
+      <main className="flex-1 pt-header pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="mb-10">

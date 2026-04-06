@@ -176,7 +176,7 @@ export default function Home() {
       <section
         ref={heroRef}
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        style={{ paddingTop: '5rem' }}
+        style={{ paddingTop: 'calc(var(--announcement-height, 0px) + 4rem)' }}
       >
         {/* Warm gradient background */}
         <div className="absolute inset-0"

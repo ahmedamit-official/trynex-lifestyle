@@ -137,7 +137,7 @@ export default function ProductDetail() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <main className="flex-1 pt-20 pb-20">
+      <main className="flex-1 pt-header pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 font-medium">

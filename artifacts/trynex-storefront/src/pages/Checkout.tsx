@@ -490,7 +490,7 @@ export default function Checkout() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      <main className="flex-1 pt-28 pb-24">
+      <main className="flex-1 pt-header pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-10">

@@ -117,7 +117,7 @@ export default function TrackOrder() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      <main className="flex-1 pt-28 pb-24 flex flex-col items-center">
+      <main className="flex-1 pt-header pb-24 flex flex-col items-center">
         <div className="max-w-2xl w-full px-4 sm:px-6">
 
           <motion.div

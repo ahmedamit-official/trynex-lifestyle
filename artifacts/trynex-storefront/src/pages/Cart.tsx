@@ -17,7 +17,7 @@ export default function Cart() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      <main className="flex-1 pt-28 pb-24">
+      <main className="flex-1 pt-header pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10">
             <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-2">Your Cart</p>

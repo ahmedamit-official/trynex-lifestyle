@@ -46,7 +46,7 @@ export default function Products() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <main className="flex-1 pt-20 pb-20">
+      <main className="flex-1 pt-header pb-20">
         {/* Page Header */}
         <div className="bg-white border-b border-gray-100 py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
