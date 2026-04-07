@@ -136,6 +136,7 @@ router.post("/orders", async (req, res) => {
         color: item.color,
         price,
         customNote: item.customNote,
+        customImages: item.customImages || [],
       };
     });
 

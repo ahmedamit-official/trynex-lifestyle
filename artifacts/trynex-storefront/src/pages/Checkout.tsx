@@ -115,7 +115,8 @@ export default function Checkout() {
             quantity: i.quantity,
             size: i.size,
             color: i.color,
-            customNote: i.customNote
+            customNote: i.customNote,
+            customImages: i.customImages,
           }))
         }
       });

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileText, Users } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileText, Users, HardDrive } from "lucide-react";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import { useEffect, useState } from "react";
 import { Loader } from "@/components/ui/Loader";
@@ -11,6 +11,7 @@ const MENU = [
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Blog Posts", href: "/admin/blog", icon: FileText },
   { name: "Customers", href: "/admin/customers", icon: Users },
+  { name: "Backup", href: "/admin/backup", icon: HardDrive },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

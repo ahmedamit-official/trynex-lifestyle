@@ -32,13 +32,13 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Preview path**: `/`
 - **Port**: 22837
 - **Dir**: `artifacts/trynex-storefront/`
-- **Pages**: Home, Products, Product Detail, Cart, Checkout, Track Order, Blog, Blog Post, Wishlist, Shipping Policy, Return Policy, Privacy Policy, Terms of Service, 404 Not Found, Admin Dashboard, Admin Products, Admin Orders, Admin Blog, Admin Settings
+- **Pages**: Home, Products, Product Detail, Cart, Checkout, Track Order, Blog, Blog Post, Wishlist, Shipping Policy, Return Policy, Privacy Policy, Terms of Service, 404 Not Found, Admin Dashboard, Admin Products, Admin Orders, Admin Blog, Admin Customers, Admin Backup, Admin Settings
 
 ### API Server
 - **Preview path**: `/api`
 - **Port**: 8080
 - **Dir**: `artifacts/api-server/`
-- **Routes**: /api/products, /api/categories, /api/orders, /api/settings, /api/admin/*, /api/blog, /api/healthz
+- **Routes**: /api/products, /api/categories, /api/orders, /api/settings, /api/admin/*, /api/blog, /api/healthz, /api/admin/backup/export, /api/admin/backup/import, /api/admin/export/orders-csv, /api/storage/*
 
 ## Design System
 
@@ -54,15 +54,15 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 ## Key Features
 
 ### Storefront
-- **Announcement bar** — scrolling ticker with deals/promotions
+- **Announcement bar** — scrolling ticker with deals/promotions, auto-hides after 6 seconds
 - **WhatsApp floating button** — direct order/inquiry via WhatsApp
 - **Wishlist** — localStorage-persisted, heart button on product cards, `/wishlist` page
 - **Flash sale countdown timer** — on homepage hero section
 - **Category grid** — 5 categories (T-Shirts, Hoodies, Mugs, Caps, Custom Orders)
 - **Animated stats** — counters on homepage (customers, products, cities, reviews)
 - **Testimonials grid** — customer reviews section
-- **Product detail** — size guide modal, WhatsApp order button, reviews tab, share button, related products section
-- **Cart & Checkout** — BDT pricing, all 64 districts, bKash/Nagad/Rocket/COD payment
+- **Product detail** — size guide modal, WhatsApp order button, reviews tab, share button, related products section, **image upload for custom designs** (uploaded to object storage, shown in admin order detail)
+- **Cart & Checkout** — BDT pricing, all 64 districts, bKash/Nagad/Rocket/COD payment, custom design images carried through to orders
 - **Blog** — SEO-optimized blog posts
 - **Track Order** — customer order tracking
 
@@ -95,6 +95,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Blog** — Post editor with markdown
 - **Customers** — All purchaser info (name, email, phone, district, address, order history, payment methods), top districts chart, repeat customer tracking, search/sort, visitor analytics guidance
 - **Settings** — Site config (name flows dynamically to storefront via SiteSettingsContext), WhatsApp number, social links, payment settings, analytics tracking IDs
+- **Backup & Export** — CSV order export, full JSON database backup/restore (orders, products, categories, settings, blog posts)
 
 ## Database Schema
 
@@ -124,5 +125,6 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 
 - GitHub connected via Replit connector (ahmedamit-official/trynex-lifestyle)
 - PostgreSQL database provisioned via Replit
+- Object storage for file uploads (customer design images)
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
 
 const ANNOUNCEMENTS = [
   {
@@ -42,12 +41,28 @@ export function AnnouncementBar() {
     return () => window.removeEventListener('resize', updateHeight);
   }, [visible]);
 
-  if (!visible) return null;
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => {
+      setVisible(false);
+      document.documentElement.style.setProperty('--announcement-height', '0px');
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [visible]);
 
   const doubled = [...ANNOUNCEMENTS, ...ANNOUNCEMENTS];
 
   return (
-    <div ref={barRef} className="announcement-bar fixed top-0 left-0 right-0 z-50">
+    <div
+      ref={barRef}
+      className="announcement-bar fixed top-0 left-0 right-0 z-50"
+      style={{
+        transform: visible ? 'translateY(0)' : 'translateY(-100%)',
+        opacity: visible ? 1 : 0,
+        transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease',
+        pointerEvents: visible ? 'auto' : 'none',
+      }}
+    >
       <div className="overflow-hidden">
         <div className="animate-ticker flex items-center">
           {doubled.map((item, i) => (
@@ -59,16 +74,6 @@ export function AnnouncementBar() {
           ))}
         </div>
       </div>
-      <button
-        onClick={() => {
-          setVisible(false);
-          document.documentElement.style.setProperty('--announcement-height', '0px');
-        }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-white/20 transition-colors"
-        aria-label="Close announcement"
-      >
-        <X className="w-3.5 h-3.5 text-white/80" />
-      </button>
     </div>
   );
 }

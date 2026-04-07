@@ -34,6 +34,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminBackup from "./pages/admin/AdminBackup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +68,7 @@ function Router() {
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/blog" component={AdminBlog} />
       <Route path="/admin/customers" component={AdminCustomers} />
+      <Route path="/admin/backup" component={AdminBackup} />
       <Route path="/admin/settings" component={AdminSettings} />
 
       <Route component={NotFound} />

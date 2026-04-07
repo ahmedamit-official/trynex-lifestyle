@@ -405,18 +405,33 @@ export default function AdminOrders() {
                   <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Items</p>
                   <div className="space-y-2">
                     {(selectedOrder.items ?? []).map((item: any, i: number) => (
-                      <div key={i} className="flex items-center justify-between p-3 rounded-xl"
+                      <div key={i} className="p-3 rounded-xl"
                         style={{ background: '#fff8f5', border: '1px solid #fed7aa' }}>
-                        <div>
-                          <p className="font-bold text-sm">{item.productName}</p>
-                          <p className="text-xs text-gray-500">
-                            Qty: {item.quantity}
-                            {item.size ? ` · Size: ${item.size}` : ''}
-                            {item.color ? ` · ${item.color}` : ''}
-                          </p>
-                          {item.customNote && <p className="text-xs text-primary/70 mt-1">"{item.customNote}"</p>}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-bold text-sm">{item.productName}</p>
+                            <p className="text-xs text-gray-500">
+                              Qty: {item.quantity}
+                              {item.size ? ` · Size: ${item.size}` : ''}
+                              {item.color ? ` · ${item.color}` : ''}
+                            </p>
+                            {item.customNote && <p className="text-xs text-primary/70 mt-1">"{item.customNote}"</p>}
+                          </div>
+                          <p className="font-black text-primary text-sm">{formatPrice(item.price * item.quantity)}</p>
                         </div>
-                        <p className="font-black text-primary text-sm">{formatPrice(item.price * item.quantity)}</p>
+                        {item.customImages && item.customImages.length > 0 && (
+                          <div className="mt-2 pt-2 border-t border-orange-100">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-orange-400 mb-1.5">Customer Design Files</p>
+                            <div className="flex flex-wrap gap-2">
+                              {item.customImages.map((img: string, idx: number) => (
+                                <a key={idx} href={img} target="_blank" rel="noopener noreferrer"
+                                  className="block w-14 h-14 rounded-lg overflow-hidden border border-gray-200 hover:border-orange-400 transition-colors hover:shadow-md">
+                                  <img src={img} alt={`Design ${idx + 1}`} className="w-full h-full object-cover" />
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

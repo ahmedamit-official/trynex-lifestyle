@@ -5,7 +5,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { Loader } from "@/components/ui/Loader";
 import { useGetProduct, useListProducts } from "@workspace/api-client-react";
 import { ProductCard } from "@/components/ProductCard";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getApiUrl } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -13,7 +13,8 @@ import { trackViewContent, trackAddToCart } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import {
   Minus, Plus, ShoppingBag, ShieldCheck, Truck, Star,
-  RotateCcw, ArrowLeft, ArrowRight, Check, Heart, Share2, Ruler, MessageCircle, Sparkles
+  RotateCcw, ArrowLeft, ArrowRight, Check, Heart, Share2, Ruler, MessageCircle, Sparkles,
+  Upload, Image as ImageIcon, X as XIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -64,6 +65,8 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [customNote, setCustomNote] = useState("");
+  const [customImages, setCustomImages] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [addedToBag, setAddedToBag] = useState(false);
   const [activeImage, setActiveImage] = useState<string>("");
   const [showSizeGuide, setShowSizeGuide] = useState(false);
@@ -100,6 +103,37 @@ export default function ProductDetail() {
 
   if (!isValidId || error || !product) return NotFound;
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingImage(true);
+    try {
+      for (const file of Array.from(files)) {
+        if (file.size > 10 * 1024 * 1024) {
+          toast({ title: "File too large", description: "Max 10MB per image", variant: "destructive" });
+          continue;
+        }
+        const metaRes = await fetch(getApiUrl('/api/storage/uploads/request-url'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type }),
+        });
+        if (!metaRes.ok) throw new Error('Upload failed');
+        const { uploadURL, objectPath } = await metaRes.json();
+        const putRes = await fetch(uploadURL, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+        if (!putRes.ok) throw new Error('File upload failed');
+        const imageUrl = getApiUrl(`/api${objectPath}`);
+        setCustomImages(prev => [...prev, imageUrl]);
+      }
+      toast({ title: "Image uploaded!", description: "Your design reference has been attached." });
+    } catch {
+      toast({ title: "Upload failed", description: "Please try again or share via WhatsApp.", variant: "destructive" });
+    } finally {
+      setUploadingImage(false);
+      e.target.value = '';
+    }
+  };
+
   const handleAddToCart = () => {
     if (product.stock < 1) return;
     const itemPrice = product.discountPrice || product.price;
@@ -112,6 +146,7 @@ export default function ProductDetail() {
       size: selectedSize || undefined,
       color: selectedColor || undefined,
       customNote: customNote || undefined,
+      customImages: customImages.length > 0 ? customImages : undefined,
     });
     trackAddToCart({ id: product.id, name: product.name, price: itemPrice, quantity });
     setAddedToBag(true);
@@ -399,19 +434,64 @@ export default function ProductDetail() {
                 </div>
               )}
 
-              {/* Custom Note */}
               {product.customizable && (
-                <div className="mb-6">
+                <div className="mb-6 space-y-4">
                   <label className="block font-bold text-gray-900 text-sm mb-2">
-                    Custom Design Note <span className="text-gray-400 font-normal">(optional)</span>
+                    <Sparkles className="inline w-4 h-4 mr-1.5 text-orange-500" />
+                    Customize Your Design
                   </label>
+
                   <textarea
                     value={customNote}
                     onChange={(e) => setCustomNote(e.target.value)}
-                    placeholder="Describe your design idea, text, or attach any reference..."
+                    placeholder="Describe your design idea, text, placement, or any instructions..."
                     rows={3}
                     className="w-full px-4 py-3 rounded-2xl text-sm font-medium focus:outline-none bg-white border border-gray-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all resize-none text-gray-800 placeholder-gray-400"
                   />
+
+                  <div className="p-4 rounded-2xl border-2 border-dashed border-gray-200 hover:border-orange-300 transition-colors"
+                    style={{ background: '#fffaf5' }}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <ImageIcon className="w-5 h-5 text-orange-500" />
+                      <div>
+                        <p className="font-bold text-sm text-gray-900">Upload Design / Logo</p>
+                        <p className="text-xs text-gray-400">PNG, JPG, or SVG — Max 10MB each</p>
+                      </div>
+                    </div>
+                    <label className={cn(
+                      "flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold cursor-pointer transition-all",
+                      uploadingImage
+                        ? "bg-gray-100 text-gray-400 cursor-wait"
+                        : "bg-white border border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-400"
+                    )}>
+                      <Upload className="w-4 h-4" />
+                      {uploadingImage ? "Uploading..." : "Choose Files"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                    </label>
+                    {customImages.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {customImages.map((img, idx) => (
+                          <div key={idx} className="relative group">
+                            <img src={img} alt={`Design ${idx + 1}`}
+                              className="w-16 h-16 rounded-xl object-cover border border-gray-200" />
+                            <button
+                              onClick={() => setCustomImages(prev => prev.filter((_, i) => i !== idx))}
+                              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <XIcon className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface CartItem {
-  id: string; // Unique ID for cart item (product ID + variant combo)
+  id: string;
   productId: number;
   name: string;
   price: number;
@@ -10,6 +10,7 @@ export interface CartItem {
   size?: string;
   color?: string;
   customNote?: string;
+  customImages?: string[];
 }
 
 interface CartContextType {
@@ -40,14 +41,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = (newItem: Omit<CartItem, 'id'>) => {
     setItems(prev => {
-      // Create a unique ID based on product, size, and color
       const id = `${newItem.productId}-${newItem.size || 'nosize'}-${newItem.color || 'nocolor'}`;
       
       const existing = prev.find(item => item.id === id);
       if (existing) {
         return prev.map(item => 
           item.id === id 
-            ? { ...item, quantity: item.quantity + newItem.quantity, customNote: newItem.customNote || item.customNote } 
+            ? {
+                ...item,
+                quantity: item.quantity + newItem.quantity,
+                customNote: newItem.customNote || item.customNote,
+                customImages: newItem.customImages?.length
+                  ? [...(item.customImages || []), ...newItem.customImages]
+                  : item.customImages,
+              } 
             : item
         );
       }
