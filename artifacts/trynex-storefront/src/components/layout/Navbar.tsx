@@ -19,12 +19,33 @@ export function Navbar() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled(y > 12);
+        if (y > 80) {
+          if (y > lastY) {
+            setHidden(true);
+          } else if (y < lastY) {
+            setHidden(false);
+          }
+        } else {
+          setHidden(false);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -47,9 +68,13 @@ export function Navbar() {
         "fixed left-0 right-0 z-40 transition-all duration-300",
         scrolled
           ? "bg-white/98 backdrop-blur-xl shadow-md shadow-orange-100/50 border-b border-orange-100"
-          : "bg-white/95 backdrop-blur-md"
+          : "bg-white/95 backdrop-blur-md",
+        hidden && !mobileOpen && "pointer-events-none"
       )}
-      style={{ top: 'var(--announcement-height, 0px)' }}
+      style={{
+        top: 'var(--announcement-height, 0px)',
+        transform: hidden && !mobileOpen ? 'translateY(-100%)' : 'translateY(0)',
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

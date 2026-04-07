@@ -137,7 +137,26 @@ export default function ProductDetail() {
   };
 
   const handleWhatsAppOrder = () => {
-    const msg = `Hi TryNex! I'd like to order:\n\nProduct: ${product.name}\nSize: ${selectedSize || "Not selected"}\nColor: ${selectedColor || "Not selected"}\nQuantity: ${quantity}\nNote: ${customNote || "None"}\n\nPlease confirm availability and total.`;
+    const itemPrice = product.discountPrice || product.price;
+    const totalPrice = itemPrice * quantity;
+    const lines = [
+      `Assalamu Alaikum, TryNex!`,
+      ``,
+      `I'd like to place an order:`,
+      ``,
+      `🛍️ *Product:* ${product.name}`,
+      `💰 *Price:* ${formatPrice(itemPrice)}${product.discountPrice ? ` (was ${formatPrice(product.price)})` : ``}`,
+      `📦 *Quantity:* ${quantity}`,
+      `💵 *Total:* ${formatPrice(totalPrice)}`,
+    ];
+    if (selectedSize) lines.push(`📏 *Size:* ${selectedSize}`);
+    if (selectedColor) lines.push(`🎨 *Color:* ${selectedColor}`);
+    if (customNote) lines.push(`✏️ *Custom Note:* ${customNote}`);
+    lines.push(``);
+    lines.push(`🔗 *Product Link:* ${window.location.href}`);
+    lines.push(``);
+    lines.push(`Please confirm availability and delivery details. Thank you!`);
+    const msg = lines.join('\n');
     window.open(`https://wa.me/8801903426915?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
 

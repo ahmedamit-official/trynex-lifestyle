@@ -173,7 +173,7 @@ export default function Products() {
                   <div className="text-3xl mb-2">🎨</div>
                   <p className="font-bold text-sm mb-1">Custom Order?</p>
                   <p className="text-xs text-orange-100 mb-3">Starting from ৳750. WhatsApp us!</p>
-                  <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer"
+                  <a href="https://wa.me/8801903426915?text=Hi%20TryNex!%20I%27m%20interested%20in%20a%20custom%20order.%20Can%20you%20help%20me%3F" target="_blank" rel="noopener noreferrer"
                     className="inline-block px-4 py-2 rounded-xl bg-white text-orange-600 text-xs font-black hover:bg-orange-50 transition-colors">
                     Chat Now
                   </a>
