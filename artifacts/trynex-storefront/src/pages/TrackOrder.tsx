@@ -9,7 +9,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice, cn, getApiUrl } from "@/lib/utils";
 
-const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-400 transition-all placeholder:text-gray-400";
+const inputClass = "w-full px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-400";
 const inputStyle = { background: 'white', border: '1px solid #e5e7eb', color: '#111827' };
 
 const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: string; border: string; icon: typeof XCircle; desc: string }> = {
@@ -34,7 +34,7 @@ const PAYMENT_STATUSES: Record<string, { label: string; color: string; bg: strin
     icon: AlertTriangle, desc: 'Issue with payment — contact us on WhatsApp'
   },
   cod: {
-    label: 'Cash on Delivery', color: '#16a34a', bg: 'rgba(22,163,74,0.06)', border: 'rgba(22,163,74,0.15)',
+    label: 'Cash on Delivery', color: '#16a34a', bg: 'rgba(74,222,128,0.08)', border: 'rgba(74,222,128,0.2)',
     icon: CheckCircle2, desc: 'Pay when you receive your order'
   },
 };
@@ -129,8 +129,8 @@ export default function TrackOrder() {
               style={{ background: 'rgba(232,93,4,0.08)', border: '1px solid rgba(232,93,4,0.15)' }}>
               <MapPin className="w-9 h-9 text-orange-500" />
             </div>
-            <p className="text-xs font-black uppercase tracking-widest text-orange-500 mb-3">Live Tracking</p>
-            <h1 className="text-5xl font-black font-display tracking-tighter mb-4 text-gray-900">Track Your Order</h1>
+            <p className="text-xs font-black uppercase tracking-widest text-primary mb-3">Live Tracking</p>
+            <h1 className="text-5xl font-black font-display tracking-tighter mb-4">Track Your Order</h1>
             <p className="text-gray-400 text-base">Real-time updates on your TryNex order status.</p>
           </motion.div>
 
@@ -139,12 +139,12 @@ export default function TrackOrder() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="p-7 rounded-3xl mb-8"
-            style={{ background: '#FAFAFA', border: '1px solid #e5e7eb' }}
+            style={{ background: 'white', border: '1px solid #e5e7eb' }}
           >
             <form onSubmit={handleTrack} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
                     Order Number *
                   </label>
                   <input
@@ -157,7 +157,7 @@ export default function TrackOrder() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
+                  <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
                     Email Address (used at checkout)
                   </label>
                   <input
@@ -188,7 +188,7 @@ export default function TrackOrder() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="text-center p-6 rounded-2xl text-sm font-semibold mb-6"
-                style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', color: '#ef4444' }}
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}
               >
                 <XCircle className="w-6 h-6 mx-auto mb-2 opacity-70" />
                 Order not found. Please check your Order Number and Email, then try again.
@@ -204,14 +204,17 @@ export default function TrackOrder() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                <div className="rounded-3xl overflow-hidden bg-white border border-gray-200"
-                  style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+                {/* Main Card */}
+                <div className="rounded-3xl overflow-hidden"
+                  style={{ background: 'white', border: '1px solid #e5e7eb' }}>
 
-                  <div className="p-6 sm:p-8 bg-gray-50/80">
+                  {/* Status Header */}
+                  <div className="p-6 sm:p-8"
+                    style={{ background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)' }}>
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Order Reference</p>
-                        <p className="text-2xl font-black font-mono text-orange-600">{displayOrder.orderNumber as string}</p>
+                        <p className="text-2xl font-black font-mono text-primary">{displayOrder.orderNumber as string}</p>
                       </div>
                       {isPolling && (
                         <div className="flex items-center gap-1.5 text-xs text-gray-400">
@@ -226,7 +229,7 @@ export default function TrackOrder() {
 
                     {(displayOrder.status as string) !== 'cancelled' ? (
                       <div className="relative">
-                        <div className="absolute top-5 left-5 right-5 h-0.5 rounded-full bg-gray-200" />
+                        <div className="absolute top-5 left-5 right-5 h-0.5 rounded-full" style={{ background: '#e5e7eb' }} />
                         {stepIdx > 0 && (
                           <div
                             className="absolute top-5 left-5 h-0.5 rounded-full transition-all duration-1000"
@@ -249,15 +252,15 @@ export default function TrackOrder() {
                                   transition={{ repeat: Infinity, duration: 2 }}
                                   className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500"
                                   style={{
-                                    background: isActive ? '#E85D04' : 'white',
-                                    borderColor: isActive ? '#E85D04' : '#e5e7eb',
-                                    color: isActive ? 'white' : '#9ca3af',
-                                    boxShadow: isCurrent ? '0 0 20px rgba(232,93,4,0.4)' : undefined
+                                    background: isActive ? 'hsl(var(--primary))' : 'white',
+                                    borderColor: isActive ? 'hsl(var(--primary))' : '#e5e7eb',
+                                    color: isActive ? 'white' : '#d1d5db',
+                                    boxShadow: isCurrent ? '0 0 20px rgba(255,107,43,0.5)' : undefined
                                   }}
                                 >
                                   <Icon className="w-4 h-4" />
                                 </motion.div>
-                                <span className={cn("text-[10px] font-black text-center hidden sm:block", isActive ? "text-gray-900" : "text-gray-300")}>
+                                <span className={cn("text-[10px] font-black text-center hidden sm:block", isActive ? "text-gray-700" : "text-gray-300")}>
                                   {step.label}
                                 </span>
                               </div>
@@ -277,6 +280,7 @@ export default function TrackOrder() {
                     )}
                   </div>
 
+                  {/* Payment Status */}
                   {paymentInfo && (displayOrder.paymentMethod as string) !== 'cod' && (
                     <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
                       <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Payment Status</p>
@@ -285,7 +289,7 @@ export default function TrackOrder() {
                         {PayIcon && <PayIcon className="w-6 h-6 shrink-0" style={{ color: paymentInfo.color }} />}
                         <div className="flex-1">
                           <p className="font-black text-sm" style={{ color: paymentInfo.color }}>{paymentInfo.label}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{paymentInfo.desc}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{paymentInfo.desc}</p>
                         </div>
                         {(displayOrder.paymentStatus as string) === 'verified' && (
                           <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
@@ -299,38 +303,41 @@ export default function TrackOrder() {
                     </div>
                   )}
 
+                  {/* Customer Info */}
                   <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
                     <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Delivery Details</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                      <div className="p-3 rounded-xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Customer</p>
-                        <p className="font-bold text-sm text-gray-900">{displayOrder.customerName as string}</p>
+                        <p className="font-bold text-sm text-gray-800">{displayOrder.customerName as string}</p>
                       </div>
-                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                      <div className="p-3 rounded-xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Payment</p>
-                        <p className="font-bold text-sm text-gray-900">{paymentMethodLabel[(displayOrder.paymentMethod as string)] || (displayOrder.paymentMethod as string)}</p>
+                        <p className="font-bold text-sm text-gray-800">{paymentMethodLabel[(displayOrder.paymentMethod as string)] || (displayOrder.paymentMethod as string)}</p>
                       </div>
                       {displayOrder.shippingDistrict && (
-                        <div className="col-span-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <div className="col-span-2 p-3 rounded-xl" style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping District</p>
-                          <p className="font-bold text-sm text-gray-900">{displayOrder.shippingDistrict as string}</p>
+                          <p className="font-bold text-sm text-gray-800">{displayOrder.shippingDistrict as string}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
+                  {/* Order Items */}
                   <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
                     <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Items Ordered</p>
                     <div className="space-y-3">
-                      {(displayOrder.items as Array<Record<string, unknown>>).map((item, idx: number) => (
+                      {(displayOrder.items as Array<Record<string, unknown>>).map((item: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
-                          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0"
+                            style={{ background: '#f3f4f6' }}>
                             {item.productImage && (
                               <img src={item.productImage as string} alt="" className="w-full h-full object-cover" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm leading-snug text-gray-900">{item.productName as string}</p>
+                            <p className="font-bold text-sm leading-snug text-gray-800">{item.productName as string}</p>
                             <p className="text-xs text-gray-400 mt-0.5">
                               Qty: {item.quantity as number}
                               {item.size ? ` · Size: ${item.size}` : ''}
@@ -342,23 +349,23 @@ export default function TrackOrder() {
                       ))}
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-gray-200 space-y-2">
+                    <div className="mt-5 pt-4 border-t border-gray-100 space-y-2">
                       <div className="flex justify-between text-sm text-gray-400">
-                        <span>Subtotal</span><span className="text-gray-900">{formatPrice(displayOrder.subtotal as number)}</span>
+                        <span>Subtotal</span><span>{formatPrice(displayOrder.subtotal as number)}</span>
                       </div>
                       <div className="flex justify-between text-sm text-gray-400">
                         <span>Shipping</span>
                         <span className="text-gray-900">{(displayOrder.shippingCost as number) === 0 ? "FREE" : formatPrice(displayOrder.shippingCost as number)}</span>
                       </div>
-                      <div className="flex justify-between font-black text-lg pt-2 border-t border-gray-200">
-                        <span className="text-gray-900">Total</span><span className="text-orange-600">{formatPrice(displayOrder.total as number)}</span>
+                      <div className="flex justify-between font-black text-lg pt-2 border-t border-gray-100">
+                        <span className="text-gray-800">Total</span><span className="text-primary">{formatPrice(displayOrder.total as number)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-5 rounded-2xl text-center"
-                  style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.1)' }}>
+                  style={{ background: 'rgba(255,107,43,0.05)', border: '1px solid rgba(255,107,43,0.1)' }}>
                   <p className="text-sm text-gray-500">
                     Questions? WhatsApp us at{' '}
                     <a

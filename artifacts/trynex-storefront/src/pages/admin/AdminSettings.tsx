@@ -15,7 +15,7 @@ const SectionCard = ({ icon: Icon, title, iconColor = "#E85D04", children }: {
   icon: any; title: string; iconColor?: string; children: React.ReactNode;
 }) => (
   <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}>
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100" style={{ background: '#f9fafb' }}>
       <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}25` }}>
         <Icon className="w-4 h-4" style={{ color: iconColor }} />
       </div>

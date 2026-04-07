@@ -31,10 +31,10 @@ export default function Cart() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-28 rounded-3xl"
-              style={{ background: '#FAFAFA', border: '1px dashed #e5e7eb' }}
+              style={{ background: 'white', border: '1px dashed #e5e7eb' }}
             >
               <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: '#f3f4f6' }}>
-                <ShoppingBag className="w-10 h-10 text-gray-300" />
+                <ShoppingBag className="w-10 h-10 text-gray-400" />
               </div>
               <h2 className="text-2xl font-bold mb-3 text-gray-900">Nothing here yet</h2>
               <p className="text-gray-400 mb-8">Add some amazing products to your cart</p>
@@ -60,7 +60,8 @@ export default function Cart() {
                       className="flex gap-5 p-4 rounded-2xl"
                       style={{ background: 'white', border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
                     >
-                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                      {/* Image */}
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden shrink-0" style={{ background: '#f3f4f6' }}>
                         <img
                           src={item.imageUrl || `https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop`}
                           alt={item.name}
@@ -76,12 +77,12 @@ export default function Cart() {
                             </Link>
                             <div className="flex flex-wrap gap-2 mt-1.5">
                               {item.size && (
-                                <span className="text-xs px-2 py-0.5 rounded-md font-semibold bg-gray-100 text-gray-500">
+                                <span className="text-xs px-2 py-0.5 rounded-md font-semibold" style={{ background: '#f3f4f6', color: '#6b7280' }}>
                                   Size: {item.size}
                                 </span>
                               )}
                               {item.color && (
-                                <span className="text-xs px-2 py-0.5 rounded-md font-semibold capitalize bg-gray-100 text-gray-500">
+                                <span className="text-xs px-2 py-0.5 rounded-md font-semibold capitalize" style={{ background: '#f3f4f6', color: '#6b7280' }}>
                                   {item.color}
                                 </span>
                               )}
@@ -101,7 +102,7 @@ export default function Cart() {
                         </div>
 
                         <div className="flex items-center justify-between mt-3">
-                          <div className="flex items-center rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+                          <div className="flex items-center rounded-xl border border-gray-200 overflow-hidden" style={{ background: '#f9fafb' }}>
                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-2 text-gray-400 hover:text-gray-700 transition-colors">
                               <Minus className="w-3.5 h-3.5" />
                             </button>
@@ -119,7 +120,7 @@ export default function Cart() {
               </div>
 
               <div className="lg:col-span-5">
-                <div className="sticky top-28 rounded-3xl p-7" style={{ background: '#FAFAFA', border: '1px solid #e5e7eb' }}>
+                <div className="sticky top-28 rounded-3xl p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
                   <h3 className="text-xl font-bold font-display mb-6 text-gray-900">Order Summary</h3>
 
                   <div className="space-y-3 mb-6 text-sm">
@@ -167,6 +168,7 @@ export default function Cart() {
                   </div>
                 </div>
               </div>
+
             </div>
           )}
         </div>

@@ -396,7 +396,7 @@ export default function Checkout() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2">
+                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
                   Your Sending Number — Last 4 Digits *
                 </label>
                 <input
@@ -415,7 +415,7 @@ export default function Checkout() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
                   <Tag className="w-3 h-3" /> Promo Code (Optional)
                 </label>
                 <input
@@ -503,8 +503,9 @@ export default function Checkout() {
             <div className="lg:col-span-7 space-y-6">
               <form id="checkout-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-                <div className="p-7 rounded-3xl bg-white" style={{ border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-                  <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-900">
+                {/* Delivery Details */}
+                <div className="p-7 rounded-3xl" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                  <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
                       <MapPin className="w-4 h-4" />
@@ -513,40 +514,41 @@ export default function Checkout() {
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Full Name *</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Full Name *</label>
                       <input {...register("customerName")} className={inputClass} style={inputStyle} placeholder="Your full name" />
                       {errors.customerName && <p className="text-red-500 text-xs mt-1.5">{errors.customerName.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Email *</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email *</label>
                       <input type="email" {...register("customerEmail")} className={inputClass} style={inputStyle} placeholder="you@example.com" />
                       {errors.customerEmail && <p className="text-red-500 text-xs mt-1.5">{errors.customerEmail.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Phone *</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Phone *</label>
                       <input {...register("customerPhone")} className={inputClass} style={inputStyle} placeholder="01XXXXXXXXX" />
                       {errors.customerPhone && <p className="text-red-500 text-xs mt-1.5">{errors.customerPhone.message}</p>}
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Street Address *</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Street Address *</label>
                       <textarea {...register("shippingAddress")} rows={3} className={`${inputClass} resize-none`} style={inputStyle} placeholder="House / Road / Area / Thana" />
                       {errors.shippingAddress && <p className="text-red-500 text-xs mt-1.5">{errors.shippingAddress.message}</p>}
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">District *</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">District *</label>
                       <select {...register("shippingDistrict")} className={inputClass} style={{ ...inputStyle, appearance: 'none' }}>
                         {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
                       </select>
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Order Notes (Optional)</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Order Notes (Optional)</label>
                       <input {...register("notes")} className={inputClass} style={inputStyle} placeholder="Any special instructions..." />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-7 rounded-3xl bg-white" style={{ border: '1px solid #e5e7eb', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-                  <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-900">
+                {/* Payment Method */}
+                <div className="p-7 rounded-3xl" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                  <h2 className="text-xl font-black font-display flex items-center gap-3 mb-6 text-gray-800">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center"
                       style={{ background: 'rgba(232,93,4,0.08)', color: '#E85D04' }}>
                       <CreditCard className="w-4 h-4" />
@@ -555,7 +557,7 @@ export default function Checkout() {
                   </h2>
 
                   <div className="mb-4 p-3 rounded-xl flex items-start gap-2.5"
-                    style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.12)' }}>
+                    style={{ background: 'rgba(232,93,4,0.04)', border: '1px solid rgba(232,93,4,0.15)' }}>
                     <AlertCircle className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
                     <p className="text-xs text-gray-500 leading-relaxed">
                       <strong className="text-orange-600">15% advance is required for all orders</strong> — this lets us confirm and dispatch your order. The remaining balance is collected on delivery.
@@ -682,17 +684,18 @@ export default function Checkout() {
             </div>
 
             <div className="lg:col-span-5">
-              <div className="sticky top-28 rounded-3xl p-7" style={{ background: '#FAFAFA', border: '1px solid #e5e7eb' }}>
-                <h3 className="text-lg font-black font-display mb-6 text-gray-900">Order Summary</h3>
+              <div className="sticky top-28 rounded-3xl p-7" style={{ background: 'white', border: '1px solid #e5e7eb' }}>
+                <h3 className="text-lg font-black font-display mb-6 text-gray-800">Order Summary</h3>
 
                 <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1 mb-6 hide-scrollbar">
                   {items.map(item => (
                     <div key={item.id} className="flex gap-3 items-center">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-gray-100 bg-gray-100">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-gray-100"
+                        style={{ background: '#f3f4f6' }}>
                         {item.imageUrl && <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm leading-tight truncate text-gray-900">{item.name}</p>
+                        <p className="font-bold text-sm leading-tight truncate text-gray-800">{item.name}</p>
                         <p className="text-xs text-gray-400 mt-0.5">
                           Qty: {item.quantity}
                           {item.size ? ` · ${item.size}` : ''}
@@ -704,20 +707,20 @@ export default function Checkout() {
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 space-y-2.5 mb-6 text-sm">
-                  <div className="flex justify-between text-gray-500">
+                <div className="border-t border-gray-100 pt-4 space-y-2.5 mb-6 text-sm">
+                  <div className="flex justify-between text-gray-400">
                     <span>Subtotal</span>
-                    <span className="font-semibold text-gray-900">{formatPrice(liveSubtotal)}</span>
+                    <span className="font-semibold text-gray-700">{formatPrice(liveSubtotal)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-500">
+                  <div className="flex justify-between text-gray-400">
                     <span>Shipping</span>
-                    <span className={shippingCost === 0 ? "font-bold text-green-600" : "font-semibold text-gray-900"}>
+                    <span className={shippingCost === 0 ? "font-bold text-green-500" : "font-semibold text-gray-700"}>
                       {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-                    <span className="font-bold text-lg text-gray-900">Total</span>
-                    <span className="font-black text-2xl text-orange-600">{formatPrice(total)}</span>
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                    <span className="font-bold text-lg text-gray-800">Total</span>
+                    <span className="font-black text-2xl text-primary">{formatPrice(total)}</span>
                   </div>
 
                   <div className="space-y-2 pt-1">
@@ -730,7 +733,7 @@ export default function Checkout() {
                       <span className="font-black text-orange-600">{formatPrice(advanceAmount)}</span>
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-xl"
-                      style={{ background: 'rgba(22,163,74,0.04)', border: '1px solid rgba(22,163,74,0.12)' }}>
+                      style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
                       <span className="text-xs font-bold text-green-600">Remaining (Paid on Delivery)</span>
                       <span className="font-black text-green-600">{formatPrice(total - advanceAmount)}</span>
                     </div>
@@ -754,7 +757,7 @@ export default function Checkout() {
                 </button>
 
                 <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400">
-                  <ShieldCheck className="w-3.5 h-3.5 text-orange-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-primary/50" />
                   Secure · All 64 Districts · Free Shipping ৳1500+
                 </div>
 
@@ -763,7 +766,7 @@ export default function Checkout() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl font-semibold text-xs transition-all"
-                  style={{ background: 'rgba(37,211,102,0.06)', border: '1px solid rgba(37,211,102,0.12)', color: '#16a34a' }}
+                  style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.15)', color: '#16a34a' }}
                 >
                   <MessageCircle className="w-3.5 h-3.5" /> Any questions? WhatsApp us — {WHATSAPP_NUMBER_LOCAL}
                 </a>
