@@ -137,6 +137,42 @@ router.get("/admin/stats", async (req, res) => {
       updatedAt: o.updatedAt?.toISOString(),
     });
 
+    const [weeklyRevenueData, paymentMethodData] = await Promise.all([
+      db.select({
+        day: sql<string>`TO_CHAR(created_at, 'Dy')`,
+        revenue: sql<number>`COALESCE(SUM(total::numeric), 0)`,
+        orders: sql<number>`COUNT(*)`,
+      }).from(ordersTable)
+        .where(sql`created_at >= NOW() - INTERVAL '7 days'`)
+        .groupBy(sql`TO_CHAR(created_at, 'Dy'), DATE(created_at)`)
+        .orderBy(sql`DATE(created_at)`),
+
+      db.select({
+        method: ordersTable.paymentMethod,
+        count: sql<number>`COUNT(*)`,
+      }).from(ordersTable)
+        .groupBy(ordersTable.paymentMethod),
+    ]);
+
+    const totalPaymentOrders = paymentMethodData.reduce((s, p) => s + Number(p.count), 0);
+    const paymentColors: Record<string, string> = {
+      bkash: "#e2136e", nagad: "#f7941d", cod: "#16a34a", rocket: "#8b2291"
+    };
+    const paymentLabels: Record<string, string> = {
+      bkash: "bKash", nagad: "Nagad", cod: "COD", rocket: "Rocket"
+    };
+    const paymentDistribution = paymentMethodData.map(p => ({
+      name: paymentLabels[p.method] || p.method,
+      value: totalPaymentOrders > 0 ? Math.round((Number(p.count) / totalPaymentOrders) * 100) : 0,
+      color: paymentColors[p.method] || "#6b7280",
+    }));
+
+    const weeklyData = weeklyRevenueData.map(w => ({
+      day: w.day,
+      revenue: Number(w.revenue),
+      orders: Number(w.orders),
+    }));
+
     res.json({
       totalOrders: Number(totalResult[0]?.count ?? 0),
       pendingOrders: Number(pendingResult[0]?.count ?? 0),
@@ -148,6 +184,8 @@ router.get("/admin/stats", async (req, res) => {
       totalProducts: Number(totalProductsResult[0]?.count ?? 0),
       lowStockProducts: Number(lowStockResult[0]?.count ?? 0),
       recentOrders: recentOrders.map(mapOrder),
+      weeklyData,
+      paymentDistribution,
     });
   } catch (err) {
     req.log.error({ err }, "Failed to get admin stats");

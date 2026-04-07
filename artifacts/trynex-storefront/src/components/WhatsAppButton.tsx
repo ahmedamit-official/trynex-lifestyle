@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { X, MessageCircle } from "lucide-react";
 
-const WHATSAPP_NUMBER = "8801XXXXXXXXX";
+const WHATSAPP_NUMBER = "8801903426915";
 const DEFAULT_MESSAGE = "Hello TryNex! I'm interested in placing a custom order. Can you help me?";
 
 export function WhatsAppButton() {

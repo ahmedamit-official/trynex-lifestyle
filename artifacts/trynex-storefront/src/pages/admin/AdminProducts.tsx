@@ -269,7 +269,7 @@ export default function AdminProducts() {
               <div className="p-4">
                 <h3 className="font-bold text-sm leading-tight truncate mb-1 text-gray-900">{product.name}</h3>
                 <p className="text-xs text-gray-400 truncate mb-3">{product.slug}</p>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <div>
                     <span className="font-black text-orange-600 text-sm">{formatPrice(product.price)}</span>
                     {product.discountPrice && (
@@ -284,6 +284,20 @@ export default function AdminProducts() {
                     }}>
                     {product.stock === 0 ? 'Out of stock' : `Stock: ${product.stock}`}
                   </div>
+                </div>
+                <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
+                  <button
+                    onClick={() => openEditModal(product)}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-100 transition-all"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(product.id, product.name)}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 transition-all"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             </motion.div>

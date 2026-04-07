@@ -71,7 +71,7 @@ export default function Checkout() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { shippingDistrict: 'Dhaka' }
+    defaultValues: { shippingDistrict: '' }
   });
 
   const liveSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -538,6 +538,7 @@ export default function Checkout() {
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">District *</label>
                       <select {...register("shippingDistrict")} className={inputClass} style={{ ...inputStyle, appearance: 'none' }}>
+                        <option value="">Select your district</option>
                         {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
                       </select>
                     </div>

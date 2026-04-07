@@ -10,21 +10,21 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar
 } from "recharts";
 
-const WEEKLY_DATA = [
-  { day: "Mon", revenue: 12400, orders: 18 },
-  { day: "Tue", revenue: 18900, orders: 27 },
-  { day: "Wed", revenue: 15200, orders: 21 },
-  { day: "Thu", revenue: 22100, orders: 32 },
-  { day: "Fri", revenue: 29500, orders: 41 },
-  { day: "Sat", revenue: 35200, orders: 54 },
-  { day: "Sun", revenue: 27800, orders: 39 },
+const FALLBACK_WEEKLY = [
+  { day: "Mon", revenue: 0, orders: 0 },
+  { day: "Tue", revenue: 0, orders: 0 },
+  { day: "Wed", revenue: 0, orders: 0 },
+  { day: "Thu", revenue: 0, orders: 0 },
+  { day: "Fri", revenue: 0, orders: 0 },
+  { day: "Sat", revenue: 0, orders: 0 },
+  { day: "Sun", revenue: 0, orders: 0 },
 ];
 
-const PAYMENT_DATA = [
-  { name: "bKash", value: 45, color: "#e2136e" },
-  { name: "Nagad", value: 28, color: "#f7941d" },
-  { name: "COD", value: 18, color: "#16a34a" },
-  { name: "Rocket", value: 9, color: "#8b2291" },
+const FALLBACK_PAYMENT = [
+  { name: "bKash", value: 0, color: "#e2136e" },
+  { name: "Nagad", value: 0, color: "#f7941d" },
+  { name: "COD", value: 0, color: "#16a34a" },
+  { name: "Rocket", value: 0, color: "#8b2291" },
 ];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -52,6 +52,8 @@ export default function AdminDashboard() {
   if (isLoading || !stats) return <AdminLayout><Loader /></AdminLayout>;
 
   const lastRefresh = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString('en-BD') : null;
+  const WEEKLY_DATA = (stats as any).weeklyData?.length > 0 ? (stats as any).weeklyData : FALLBACK_WEEKLY;
+  const PAYMENT_DATA = (stats as any).paymentDistribution?.length > 0 ? (stats as any).paymentDistribution : FALLBACK_PAYMENT;
 
   const cards = [
     {
@@ -62,7 +64,7 @@ export default function AdminDashboard() {
       bg: "#f0fdf4",
       border: "#bbf7d0",
       desc: "All time earnings",
-      trend: "+12.5%"
+      trend: ""
     },
     {
       title: "Today's Revenue",
@@ -72,7 +74,7 @@ export default function AdminDashboard() {
       bg: "#eff6ff",
       border: "#bfdbfe",
       desc: "Earned today",
-      trend: "+8.2%"
+      trend: ""
     },
     {
       title: "Total Orders",
@@ -82,7 +84,7 @@ export default function AdminDashboard() {
       bg: "#fff4ee",
       border: "#fdd5b4",
       desc: "All orders placed",
-      trend: "+5.1%"
+      trend: `${stats.pendingOrders} pending`
     },
     {
       title: "Low Stock Alert",
@@ -92,7 +94,7 @@ export default function AdminDashboard() {
       bg: "#fffbeb",
       border: "#fde68a",
       desc: "Products ≤ 5 units",
-      trend: "Action needed"
+      trend: stats.lowStockProducts > 0 ? "Action needed" : "All good"
     },
   ];
 
@@ -149,10 +151,12 @@ export default function AdminDashboard() {
                   style={{ background: c.bg }}>
                   <Icon className="w-5 h-5" style={{ color: c.color }} />
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-                  style={{ background: c.bg, color: c.color }}>
-                  {c.trend}
-                </span>
+                {c.trend && (
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: c.bg, color: c.color }}>
+                    {c.trend}
+                  </span>
+                )}
               </div>
               <p className="text-2xl font-black text-gray-900 mb-1">{c.value}</p>
               <p className="text-xs text-gray-500 font-medium">{c.title}</p>
@@ -177,7 +181,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-gray-400 mt-0.5">Last 7 days performance</p>
             </div>
             <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-green-50 text-green-600 border border-green-100">
-              ↑ +18.2% this week
+              Real-time data
             </span>
           </div>
           <ResponsiveContainer width="100%" height={220}>

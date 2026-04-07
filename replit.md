@@ -61,7 +61,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Category grid** — 5 categories (T-Shirts, Hoodies, Mugs, Caps, Custom Orders)
 - **Animated stats** — counters on homepage (customers, products, cities, reviews)
 - **Testimonials grid** — customer reviews section
-- **Product detail** — size guide modal, WhatsApp order button, reviews tab, share button
+- **Product detail** — size guide modal, WhatsApp order button, reviews tab, share button, related products section
 - **Cart & Checkout** — BDT pricing, all 64 districts, bKash/Nagad/Rocket/COD payment
 - **Blog** — SEO-optimized blog posts
 - **Track Order** — customer order tracking
@@ -88,7 +88,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 ### Admin Panel
 - **URL**: `/admin` (hidden; tap footer logo 5 times)
 - **Credentials**: admin / Admins@Trynex
-- **Dashboard** — Recharts charts: AreaChart (weekly revenue), PieChart (payment methods), BarChart (daily orders); live stats with 30s auto-refresh
+- **Dashboard** — Recharts charts: AreaChart (weekly revenue from real order data), PieChart (payment method distribution from real orders), BarChart (daily orders); live stats with 30s auto-refresh; no fake trend percentages
 - **Products** — CRUD management with image upload
 - **Orders** — Full order management with status updates
 - **Blog** — Post editor with markdown
@@ -116,7 +116,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 ## Admin Access
 
 - URL: `/admin`
-- Default credentials: admin / admin123 (change in production via Settings)
+- Default credentials: admin / Admins@Trynex (change in production via Settings)
 - Secret access: tap footer logo 5 times
 
 ## Integrations

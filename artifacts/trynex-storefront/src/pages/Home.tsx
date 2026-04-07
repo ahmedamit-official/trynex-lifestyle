@@ -203,8 +203,8 @@ export default function Home() {
       ═══════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        style={{ paddingTop: 'calc(var(--announcement-height, 0px) + 4rem)' }}
+        className="relative flex items-center justify-center overflow-hidden"
+        style={{ paddingTop: 'calc(var(--announcement-height, 0px) + 4rem)', paddingBottom: '3rem', minHeight: '85vh' }}
       >
         {/* Warm gradient background */}
         <div className="absolute inset-0"

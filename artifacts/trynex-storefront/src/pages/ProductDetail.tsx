@@ -3,7 +3,8 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SEOHead } from "@/components/SEOHead";
 import { Loader } from "@/components/ui/Loader";
-import { useGetProduct } from "@workspace/api-client-react";
+import { useGetProduct, useListProducts } from "@workspace/api-client-react";
+import { ProductCard } from "@/components/ProductCard";
 import { formatPrice, cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
@@ -12,7 +13,7 @@ import { trackViewContent, trackAddToCart } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import {
   Minus, Plus, ShoppingBag, ShieldCheck, Truck, Star,
-  RotateCcw, ArrowLeft, Check, Heart, Share2, Ruler, MessageCircle
+  RotateCcw, ArrowLeft, ArrowRight, Check, Heart, Share2, Ruler, MessageCircle, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -48,6 +49,12 @@ export default function ProductDetail() {
   const { data: product, isLoading, error } = useGetProduct(productId, {
     query: { enabled: isValidId, retry: 2, staleTime: 30000 }
   });
+
+  const { data: relatedData } = useListProducts(
+    { limit: 4, category: product?.category || undefined },
+    { query: { enabled: !!product, staleTime: 60000 } }
+  );
+  const relatedProducts = (relatedData?.products || []).filter(p => p.id !== productId).slice(0, 4);
 
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -131,7 +138,7 @@ export default function ProductDetail() {
 
   const handleWhatsAppOrder = () => {
     const msg = `Hi TryNex! I'd like to order:\n\nProduct: ${product.name}\nSize: ${selectedSize || "Not selected"}\nColor: ${selectedColor || "Not selected"}\nQuantity: ${quantity}\nNote: ${customNote || "None"}\n\nPlease confirm availability and total.`;
-    window.open(`https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/8801903426915?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -579,6 +586,30 @@ export default function ProductDetail() {
           </div>
         </div>
       </main>
+
+      {relatedProducts.length > 0 && (
+        <section className="py-16 px-4 bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
+                  style={{ background: '#fff4ee', color: '#E85D04' }}>
+                  <Sparkles className="w-3 h-3" /> You may also like
+                </span>
+                <h2 className="text-2xl font-black font-display tracking-tight text-gray-900">Related Products</h2>
+              </div>
+              <Link href="/products" className="flex items-center gap-1.5 font-bold text-sm text-orange-600 hover:text-orange-700 transition-colors">
+                View All <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+              {relatedProducts.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>
