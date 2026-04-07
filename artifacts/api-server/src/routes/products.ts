@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, productsTable, categoriesTable } from "@workspace/db";
 import { eq, ilike, and, sql, desc } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -95,7 +96,7 @@ router.get("/products/:id", async (req, res) => {
   }
 });
 
-router.post("/products", async (req, res) => {
+router.post("/products", requireAdmin, async (req, res) => {
   try {
     const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, stock, featured, customizable, tags } = req.body;
     if (!name || !slug || price === undefined || stock === undefined) {
@@ -122,7 +123,7 @@ router.post("/products", async (req, res) => {
   }
 });
 
-router.put("/products/:id", async (req, res) => {
+router.put("/products/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const { name, slug, description, price, discountPrice, categoryId, imageUrl, images, sizes, colors, stock, featured, customizable, tags } = req.body;
@@ -155,7 +156,7 @@ router.put("/products/:id", async (req, res) => {
   }
 });
 
-router.delete("/products/:id", async (req, res) => {
+router.delete("/products/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const [product] = await db.delete(productsTable).where(eq(productsTable.id, id)).returning();

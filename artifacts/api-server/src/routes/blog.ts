@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, blogPostsTable } from "@workspace/db";
 import { eq, desc, and, sql } from "drizzle-orm";
+import { requireAdmin, validateToken } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -48,7 +49,8 @@ router.get("/blog", async (req, res) => {
     const limitNum = parseInt(limit as string, 10);
     const offset = (pageNum - 1) * limitNum;
 
-    const isAdmin = req.headers["x-admin-token"] === "admin_authenticated";
+    const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
+    const isAdmin = token ? validateToken(token) : false;
     const conditions: any[] = [];
     if (!isAdmin || published === "true") conditions.push(eq(blogPostsTable.published, true));
 
@@ -95,7 +97,7 @@ router.get("/blog/:id", async (req, res) => {
   }
 });
 
-router.post("/blog", async (req, res) => {
+router.post("/blog", requireAdmin, async (req, res) => {
   try {
     await ensureBlogTable();
     const { title, slug, excerpt, content, imageUrl, author, tags, published } = req.body;
@@ -114,7 +116,7 @@ router.post("/blog", async (req, res) => {
   }
 });
 
-router.put("/blog/:id", async (req, res) => {
+router.put("/blog/:id", requireAdmin, async (req, res) => {
   try {
     await ensureBlogTable();
     const id = parseInt(req.params.id, 10);
@@ -142,7 +144,7 @@ router.put("/blog/:id", async (req, res) => {
   }
 });
 
-router.delete("/blog/:id", async (req, res) => {
+router.delete("/blog/:id", requireAdmin, async (req, res) => {
   try {
     await ensureBlogTable();
     const id = parseInt(req.params.id, 10);

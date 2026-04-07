@@ -2,19 +2,16 @@ import { Router, type IRouter } from "express";
 import { db, ordersTable, productsTable, adminTable } from "@workspace/db";
 import { eq, sql, desc, lte, asc } from "drizzle-orm";
 import * as crypto from "crypto";
+import { validTokens, validateToken, requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
-const ADMIN_PASSWORD = "Admins@Trynex";
-const SALT = "trynex_salt_2024";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Admins@Trynex";
+const SALT = process.env.ADMIN_SALT || "trynex_salt_2024";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password + SALT).digest("hex");
 }
-
-const SHA256_HEX_RE = /^[0-9a-f]{64}$/;
-
-const validTokens = new Map<string, number>();
 
 function issueToken(): string {
   const token = crypto.createHash("sha256")
@@ -22,17 +19,6 @@ function issueToken(): string {
     .digest("hex");
   validTokens.set(token, Date.now() + 7 * 24 * 60 * 60 * 1000);
   return token;
-}
-
-function validateToken(token: string): boolean {
-  if (!SHA256_HEX_RE.test(token)) return false;
-  const expiry = validTokens.get(token);
-  if (expiry === undefined) return false;
-  if (Date.now() > expiry) {
-    validTokens.delete(token);
-    return false;
-  }
-  return true;
 }
 
 async function ensureAdminExists() {
@@ -79,16 +65,11 @@ router.post("/admin/logout", (req, res) => {
   res.json({ success: true, message: "Logged out" });
 });
 
-router.get("/admin/me", async (req, res) => {
-  const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
-  if (!token || !validateToken(token)) {
-    res.status(401).json({ error: "unauthorized", message: "Not authenticated" });
-    return;
-  }
+router.get("/admin/me", requireAdmin, async (req, res) => {
   res.json({ authenticated: true, username: "admin" });
 });
 
-router.get("/admin/stats", async (req, res) => {
+router.get("/admin/stats", requireAdmin, async (req, res) => {
   try {
     const [
       totalResult,
@@ -193,12 +174,7 @@ router.get("/admin/stats", async (req, res) => {
   }
 });
 
-router.get("/admin/customers", async (req, res) => {
-  const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
-  if (!token || !validateToken(token)) {
-    res.status(401).json({ error: "unauthorized" });
-    return;
-  }
+router.get("/admin/customers", requireAdmin, async (req, res) => {
   try {
     const allOrders = await db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt));
 

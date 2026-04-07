@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, ordersTable, productsTable } from "@workspace/db";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -36,7 +37,7 @@ function mapOrder(o: any) {
   };
 }
 
-router.get("/orders", async (req, res) => {
+router.get("/orders", requireAdmin, async (req, res) => {
   try {
     const { status, page = "1", limit = "20" } = req.query;
     const pageNum = parseInt(page as string, 10);
@@ -87,7 +88,7 @@ router.post("/orders/track", async (req, res) => {
   }
 });
 
-router.get("/orders/:id", async (req, res) => {
+router.get("/orders/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
@@ -165,7 +166,7 @@ router.post("/orders", async (req, res) => {
   }
 });
 
-router.put("/orders/:id/status", async (req, res) => {
+router.put("/orders/:id/status", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const { status } = req.body;
@@ -185,7 +186,7 @@ router.put("/orders/:id/status", async (req, res) => {
   }
 });
 
-router.put("/orders/:id/payment-status", async (req, res) => {
+router.put("/orders/:id/payment-status", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const { paymentStatus } = req.body;

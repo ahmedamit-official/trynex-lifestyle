@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, settingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -53,7 +54,7 @@ router.get("/settings", async (req, res) => {
   }
 });
 
-router.put("/settings", async (req, res) => {
+router.put("/settings", requireAdmin, async (req, res) => {
   try {
     for (const key of SETTINGS_KEYS) {
       if (req.body[key] !== undefined) {

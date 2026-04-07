@@ -87,7 +87,8 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 
 ### Admin Panel
 - **URL**: `/admin` (hidden; tap footer logo 5 times)
-- **Credentials**: admin / Admins@Trynex
+- **Credentials**: admin / Admins@Trynex (overridable via `ADMIN_PASSWORD` env var)
+- **Auth middleware**: All admin API routes protected by `requireAdmin` middleware (`artifacts/api-server/src/middlewares/adminAuth.ts`) — validates Bearer token from login
 - **Dashboard** — Recharts charts: AreaChart (weekly revenue from real order data), PieChart (payment method distribution from real orders), BarChart (daily orders); live stats with 30s auto-refresh; no fake trend percentages
 - **Products** — CRUD management with image upload
 - **Orders** — Full order management with status updates
@@ -121,7 +122,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 
 ## Integrations
 
-- GitHub connected via Replit connector (georgelsmith333-hub)
+- GitHub connected via Replit connector (ahmedamit-official/trynex-lifestyle)
 - PostgreSQL database provisioned via Replit
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.

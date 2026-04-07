@@ -27,7 +27,7 @@ function slugify(str: string): string {
 
 async function fetchPosts(): Promise<BlogPost[]> {
   const res = await fetch(getApiUrl('/api/blog?limit=100'), {
-    headers: { ...getAuthHeaders(), 'x-admin-token': 'admin_authenticated' }
+    headers: { ...getAuthHeaders() }
   });
   const data = await res.json();
   return data.posts || [];

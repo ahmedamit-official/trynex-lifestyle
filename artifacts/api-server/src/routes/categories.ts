@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, categoriesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "../middlewares/adminAuth";
 
 const router: IRouter = Router();
 
@@ -21,7 +22,7 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-router.post("/categories", async (req, res) => {
+router.post("/categories", requireAdmin, async (req, res) => {
   try {
     const { name, slug, description, imageUrl } = req.body;
     if (!name || !slug) {
