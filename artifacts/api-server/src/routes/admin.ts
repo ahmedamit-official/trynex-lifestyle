@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, ordersTable, productsTable, adminTable } from "@workspace/db";
-import { eq, sql, desc, lte } from "drizzle-orm";
+import { eq, sql, desc, lte, asc } from "drizzle-orm";
 import * as crypto from "crypto";
 
 const router: IRouter = Router();
@@ -152,6 +152,94 @@ router.get("/admin/stats", async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "Failed to get admin stats");
     res.status(500).json({ error: "internal_error", message: "Failed to get stats" });
+  }
+});
+
+router.get("/admin/customers", async (req, res) => {
+  const token = req.headers.authorization?.replace("Bearer ", "") ?? req.cookies?.admin_token;
+  if (!token || !validateToken(token)) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  try {
+    const allOrders = await db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt));
+
+    const customerMap = new Map<string, {
+      name: string;
+      email: string;
+      phone: string;
+      district: string;
+      city: string;
+      address: string;
+      totalOrders: number;
+      totalSpent: number;
+      firstOrder: string;
+      lastOrder: string;
+      paymentMethods: string[];
+      statuses: string[];
+    }>();
+
+    for (const o of allOrders) {
+      const key = o.customerPhone || o.customerEmail;
+      const existing = customerMap.get(key);
+      if (existing) {
+        existing.totalOrders += 1;
+        existing.totalSpent += parseFloat(String(o.total));
+        if (o.createdAt && o.createdAt.toISOString() < existing.firstOrder) {
+          existing.firstOrder = o.createdAt.toISOString();
+        }
+        if (o.createdAt && o.createdAt.toISOString() > existing.lastOrder) {
+          existing.lastOrder = o.createdAt.toISOString();
+        }
+        if (!existing.paymentMethods.includes(o.paymentMethod)) {
+          existing.paymentMethods.push(o.paymentMethod);
+        }
+        if (!existing.statuses.includes(o.status)) {
+          existing.statuses.push(o.status);
+        }
+      } else {
+        customerMap.set(key, {
+          name: o.customerName,
+          email: o.customerEmail,
+          phone: o.customerPhone,
+          district: o.shippingDistrict || "",
+          city: o.shippingCity || "",
+          address: o.shippingAddress || "",
+          totalOrders: 1,
+          totalSpent: parseFloat(String(o.total)),
+          firstOrder: o.createdAt?.toISOString() || "",
+          lastOrder: o.createdAt?.toISOString() || "",
+          paymentMethods: [o.paymentMethod],
+          statuses: [o.status],
+        });
+      }
+    }
+
+    const customers = Array.from(customerMap.values()).sort((a, b) =>
+      new Date(b.lastOrder).getTime() - new Date(a.lastOrder).getTime()
+    );
+
+    const districtCounts: Record<string, number> = {};
+    for (const c of customers) {
+      if (c.district) {
+        districtCounts[c.district] = (districtCounts[c.district] || 0) + 1;
+      }
+    }
+
+    const topDistricts = Object.entries(districtCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([district, count]) => ({ district, count }));
+
+    res.json({
+      totalCustomers: customers.length,
+      totalOrders: allOrders.length,
+      customers,
+      topDistricts,
+    });
+  } catch (err) {
+    req.log.error({ err }, "Failed to get customers");
+    res.status(500).json({ error: "internal_error", message: "Failed to get customers" });
   }
 });
 

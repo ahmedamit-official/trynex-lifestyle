@@ -92,7 +92,8 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Products** — CRUD management with image upload
 - **Orders** — Full order management with status updates
 - **Blog** — Post editor with markdown
-- **Settings** — Site config, WhatsApp number, social links, payment settings, analytics tracking IDs
+- **Customers** — All purchaser info (name, email, phone, district, address, order history, payment methods), top districts chart, repeat customer tracking, search/sort, visitor analytics guidance
+- **Settings** — Site config (name flows dynamically to storefront via SiteSettingsContext), WhatsApp number, social links, payment settings, analytics tracking IDs
 
 ## Database Schema
 

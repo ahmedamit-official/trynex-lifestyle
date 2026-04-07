@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 interface SEOHeadProps {
   title?: string;
@@ -11,7 +12,6 @@ interface SEOHeadProps {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const SITE_NAME = "TryNex Lifestyle";
 const SITE_URL = "https://trynex.com.bd";
 const DEFAULT_IMAGE = "/opengraph.jpg";
 
@@ -25,7 +25,8 @@ export function SEOHead({
   noindex = false,
   jsonLd,
 }: SEOHeadProps) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Premium Custom Apparel Bangladesh`;
+  const { siteName } = useSiteSettings();
+  const fullTitle = title ? `${title} | ${siteName}` : `${siteName} | Premium Custom Apparel Bangladesh`;
   const canonicalUrl = canonical ? `${SITE_URL}${canonical}` : undefined;
   const fullOgImage = ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`;
 
@@ -42,7 +43,7 @@ export function SEOHead({
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
       <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullOgImage} />

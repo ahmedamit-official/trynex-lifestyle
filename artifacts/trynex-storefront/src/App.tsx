@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { TrackingPixels } from "@/components/TrackingPixels";
@@ -32,6 +33,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminBlog from "./pages/admin/AdminBlog";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +66,7 @@ function Router() {
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/blog" component={AdminBlog} />
+      <Route path="/admin/customers" component={AdminCustomers} />
       <Route path="/admin/settings" component={AdminSettings} />
 
       <Route component={NotFound} />
@@ -76,6 +79,7 @@ function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
+          <SiteSettingsProvider>
           <CartProvider>
             <WishlistProvider>
               <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
@@ -89,6 +93,7 @@ function App() {
               <Toaster />
             </WishlistProvider>
           </CartProvider>
+          </SiteSettingsProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </HelmetProvider>
