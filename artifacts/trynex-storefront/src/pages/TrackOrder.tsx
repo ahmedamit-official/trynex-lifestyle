@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { useTrackOrder } from "@workspace/api-client-react";
 import {
   Package, Search, Clock, CheckCircle2, Truck, MapPin,
@@ -115,6 +116,12 @@ export default function TrackOrder() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead
+        title="Track Your Order"
+        description="Track your TryNex Lifestyle order in real-time. Enter your order number to see live delivery status updates."
+        canonical="/track"
+        keywords="track order trynex, order tracking bangladesh"
+      />
       <Navbar />
 
       <main className="flex-1 pt-header pb-24 flex flex-col items-center">

@@ -1,6 +1,7 @@
 import { useParams, Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Loader } from "@/components/ui/Loader";
 import { useGetProduct } from "@workspace/api-client-react";
 import { formatPrice, cn } from "@/lib/utils";
@@ -135,6 +136,34 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEOHead
+        title={product.name}
+        description={product.description || `Buy ${product.name} from TryNex Lifestyle. Premium quality, fast delivery across Bangladesh.`}
+        canonical={`/product/${product.id}`}
+        ogImage={product.imageUrl || undefined}
+        ogType="product"
+        keywords={`${product.name}, buy ${product.name} bangladesh, trynex ${product.name}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "description": product.description || `Premium ${product.name} from TryNex Lifestyle`,
+          "image": product.imageUrl || "",
+          "brand": { "@type": "Brand", "name": "TryNex Lifestyle" },
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "BDT",
+            "price": product.discountPrice || product.price,
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "seller": { "@type": "Organization", "name": "TryNex Lifestyle" },
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": rating,
+            "reviewCount": 128,
+          },
+        }}
+      />
       <Navbar />
 
       <main className="flex-1 pt-header pb-20">

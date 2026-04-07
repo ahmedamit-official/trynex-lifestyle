@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
+import { SEOHead } from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { useCreateOrder, CreateOrderRequestPaymentMethod } from "@workspace/api-client-react";
 import { formatPrice, getApiUrl } from "@/lib/utils";
@@ -488,6 +489,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead title="Checkout" description="Complete your order at TryNex Lifestyle." noindex />
       <Navbar />
 
       <main className="flex-1 pt-header pb-24">

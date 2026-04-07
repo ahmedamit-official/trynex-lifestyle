@@ -32,7 +32,7 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Preview path**: `/`
 - **Port**: 22837
 - **Dir**: `artifacts/trynex-storefront/`
-- **Pages**: Home, Products, Product Detail, Cart, Checkout, Track Order, Blog, Blog Post, Wishlist, Admin Dashboard, Admin Products, Admin Orders, Admin Blog, Admin Settings
+- **Pages**: Home, Products, Product Detail, Cart, Checkout, Track Order, Blog, Blog Post, Wishlist, Shipping Policy, Return Policy, Privacy Policy, Terms of Service, 404 Not Found, Admin Dashboard, Admin Products, Admin Orders, Admin Blog, Admin Settings
 
 ### API Server
 - **Preview path**: `/api`
@@ -66,10 +66,16 @@ Premium e-commerce website for TryNex Lifestyle — a custom apparel brand based
 - **Blog** — SEO-optimized blog posts
 - **Track Order** — customer order tracking
 
-### SEO
+### SEO & Optimization
+- **SEOHead component** (`src/components/SEOHead.tsx`) — reusable per-page dynamic meta tags (title, description, canonical, OG, Twitter Card, JSON-LD)
+- **Per-page SEO**: Home, Products, ProductDetail (Product schema), Blog, BlogPost (BlogPosting schema), Cart, Wishlist, TrackOrder, Checkout (noindex), policy pages
 - `index.html` — full meta tags, Open Graph, Twitter Card
-- JSON-LD structured data (Organization, WebSite, OnlineStore schemas)
-- `public/robots.txt` and `public/sitemap.xml`
+- JSON-LD structured data (Organization, WebSite, OnlineStore, Product, BlogPosting schemas)
+- `public/robots.txt` — blocks admin/cart/checkout/wishlist/API paths
+- `public/sitemap.xml` — includes all public pages + policy pages
+- **ScrollToTop** (`src/components/ScrollToTop.tsx`) — auto scroll-to-top on route navigation
+- **BackToTop** (`src/components/BackToTop.tsx`) — floating button visible after 500px scroll
+- **Cloudflare Pages** — `_headers` file for static asset caching, `_redirects` for SPA routing
 
 ### Analytics & Tracking
 - **Google Analytics (GA4)**: Admin-configurable Measurement ID (G-XXXXXXXXXX)

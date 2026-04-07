@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Loader } from "@/components/ui/Loader";
+import { SEOHead } from "@/components/SEOHead";
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Search, SlidersHorizontal, X, ArrowUpDown, Grid3X3, LayoutList } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,12 @@ export default function Products() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEOHead
+        title="Shop All Products"
+        description="Browse premium custom T-shirts, Hoodies, Mugs & Caps from TryNex Lifestyle. Best prices in Bangladesh with fast delivery to all 64 districts."
+        canonical="/products"
+        keywords="buy custom tshirt bangladesh, premium hoodie bd, custom mug dhaka, branded cap bangladesh"
+      />
       <Navbar />
 
       <main className="flex-1 pt-header pb-20">

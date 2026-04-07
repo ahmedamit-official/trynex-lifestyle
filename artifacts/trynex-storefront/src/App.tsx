@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
@@ -7,8 +8,9 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { TrackingPixels } from "@/components/TrackingPixels";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { BackToTop } from "@/components/BackToTop";
 
-// Public Pages
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -18,9 +20,12 @@ import TrackOrder from "./pages/TrackOrder";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Wishlist from "./pages/Wishlist";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import ReturnPolicy from "./pages/ReturnPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/not-found";
 
-// Admin Pages
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
@@ -49,6 +54,10 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/wishlist" component={Wishlist} />
+      <Route path="/shipping-policy" component={ShippingPolicy} />
+      <Route path="/return-policy" component={ReturnPolicy} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
 
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
@@ -64,21 +73,25 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <TrackingPixels />
-              <AnnouncementBar />
-              <Router />
-              <WhatsAppButton />
-            </WouterRouter>
-            <Toaster />
-          </WishlistProvider>
-        </CartProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <TrackingPixels />
+                <ScrollToTop />
+                <AnnouncementBar />
+                <Router />
+                <WhatsAppButton />
+                <BackToTop />
+              </WouterRouter>
+              <Toaster />
+            </WishlistProvider>
+          </CartProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

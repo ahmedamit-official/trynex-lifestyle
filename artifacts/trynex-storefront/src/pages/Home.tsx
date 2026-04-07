@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Loader } from "@/components/ui/Loader";
+import { SEOHead } from "@/components/SEOHead";
 import { useListProducts } from "@workspace/api-client-react";
 import {
   ArrowRight, Sparkles, Zap, Package, Star, Check, Truck,
@@ -89,16 +90,15 @@ const CATEGORIES = [
   { name: "Custom", emoji: "✨", desc: "Anything you imagine", count: "Get a quote", color: "#fffbeb", accent: "#d97706" },
 ];
 
-function CountdownTimer() {
-  const SALE_END = new Date();
-  SALE_END.setHours(SALE_END.getHours() + 5, 30, 0, 0);
+const SALE_END_OFFSET = 5 * 3600000 + 30 * 60000;
 
+function CountdownTimer() {
+  const [saleEnd] = useState(() => new Date(Date.now() + SALE_END_OFFSET));
   const [timeLeft, setTimeLeft] = useState({ h: 5, m: 30, s: 0 });
 
   useEffect(() => {
     const tick = () => {
-      const now = new Date();
-      const diff = Math.max(0, SALE_END.getTime() - now.getTime());
+      const diff = Math.max(0, saleEnd.getTime() - Date.now());
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
@@ -107,7 +107,7 @@ function CountdownTimer() {
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [saleEnd]);
 
   const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -168,6 +168,34 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead
+        canonical="/"
+        keywords="custom t-shirt bangladesh, custom hoodie bd, premium apparel bangladesh, trynex lifestyle, custom printing dhaka, corporate gift bangladesh, custom mug bd"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "OnlineStore",
+            "name": "TryNex Lifestyle",
+            "url": "https://trynex.com.bd",
+            "description": "Bangladesh's #1 premium custom apparel brand. Custom T-shirts, Hoodies, Mugs & Caps.",
+            "areaServed": { "@type": "Country", "name": "Bangladesh" },
+            "currenciesAccepted": "BDT",
+            "paymentAccepted": "Cash on Delivery, bKash, Nagad, Rocket",
+            "priceRange": "৳399 - ৳3,999",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "TryNex Lifestyle",
+            "url": "https://trynex.com.bd",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://trynex.com.bd/products?search={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+        ]}
+      />
       <Navbar />
 
       {/* ═══════════════════════════════════════

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
 import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, ShieldCheck, Tag } from "lucide-react";
@@ -15,6 +16,7 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead title="Your Cart" description="Review your shopping cart at TryNex Lifestyle." noindex />
       <Navbar />
 
       <main className="flex-1 pt-header pb-24">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Loader } from "@/components/ui/Loader";
 import { ArrowLeft, Calendar, User, Tag, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
@@ -48,6 +49,7 @@ export default function BlogPost() {
 
   if (error || !post) return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead title="Post Not Found" noindex />
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-20">
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
@@ -72,6 +74,23 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead
+        title={post.title}
+        description={post.excerpt || `Read "${post.title}" on TryNex Lifestyle blog.`}
+        canonical={`/blog/${post.slug}`}
+        ogType="article"
+        ogImage={post.imageUrl || undefined}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": post.title,
+          "description": post.excerpt || "",
+          "author": { "@type": "Person", "name": post.author },
+          "datePublished": post.createdAt,
+          "publisher": { "@type": "Organization", "name": "TryNex Lifestyle" },
+          "image": post.imageUrl || undefined,
+        }}
+      />
       <Navbar />
 
       <main className="flex-1 pt-header pb-24">

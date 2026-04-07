@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Search, Calendar, Tag, ArrowRight, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { getApiUrl } from "@/lib/utils";
@@ -51,6 +52,12 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <SEOHead
+        title="Blog"
+        description="Read the latest tips, trends, and updates from TryNex Lifestyle. Custom apparel guides, fashion inspiration, and brand stories from Bangladesh."
+        canonical="/blog"
+        keywords="trynex blog, custom apparel tips, bangladesh fashion blog"
+      />
       <Navbar />
 
       <main className="flex-1 pt-header pb-24">

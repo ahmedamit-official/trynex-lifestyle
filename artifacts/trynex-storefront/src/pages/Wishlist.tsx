@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +21,7 @@ export default function Wishlist() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEOHead title="My Wishlist" description="Your saved items at TryNex Lifestyle." noindex />
       <Navbar />
       <main className="flex-1 pt-header pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

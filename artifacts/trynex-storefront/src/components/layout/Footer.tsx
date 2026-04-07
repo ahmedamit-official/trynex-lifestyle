@@ -186,9 +186,10 @@ export function Footer() {
                 { label: "Track Your Order", href: "/track" },
                 { label: "Blog & Tips", href: "/blog" },
                 { label: "Size Guide", href: "/products" },
-                { label: "Shipping Policy", href: "/" },
-                { label: "Return Policy", href: "/" },
-                { label: "Privacy Policy", href: "/" },
+                { label: "Shipping Policy", href: "/shipping-policy" },
+                { label: "Return Policy", href: "/return-policy" },
+                { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Terms of Service", href: "/terms-of-service" },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <Link href={href}
@@ -233,8 +234,8 @@ export function Footer() {
             in Bangladesh.
           </p>
           <div className="flex items-center gap-6 text-xs text-gray-600">
-            <span className="hover:text-gray-400 cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-gray-400 cursor-pointer transition-colors">Terms of Service</span>
+            <Link href="/privacy-policy" className="hover:text-gray-400 transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-gray-400 transition-colors">Terms of Service</Link>
             <button
               onClick={handleSecretTap}
               aria-hidden="true"
